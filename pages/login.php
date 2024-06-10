@@ -36,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = $result->fetch_assoc();
         // Assign the FirstName to the session variable
         $_SESSION['firstName'] = $row['FirstName'];
+        $_SESSION['ID'] = $row['ID'];
         echo "OK";
     } else {
         echo "NOT OK";

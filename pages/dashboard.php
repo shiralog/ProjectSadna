@@ -19,7 +19,7 @@ if (!isset($_SESSION['firstName'])) {
     <p>This is your dashboard.</p>
 
 
-    <a href="">Find partners!</a>
+    <a href="partner-finder.html">Find partners!</a>
 
     <form action="logout.php" method="post">
         <button type="submit">Logout</button>
