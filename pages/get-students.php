@@ -32,7 +32,7 @@ if ($result->num_rows > 0) {
         );
     }
 }
-////////////
+
 // Fetch likes status from database for the logged in user
 $likes = array();
 
@@ -52,16 +52,11 @@ if (isset($_SESSION['ID'])) {
 } else {
     $loggedInID = null;
 }
-////////////
+
 // Close connection
 $conn->close();
 
 // Prepare the response data
-
-// $response = array(
-//     'students' => $students,
-//     'loggedInID' => isset($_SESSION['ID']) ? $_SESSION['ID'] : null // Add loggedInID field
-// );
 $response = array(
     'students' => $students,
     'loggedInID' => $loggedInID,

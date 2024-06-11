@@ -20,6 +20,8 @@ if (!isset($_SESSION['firstName'])) {
 
 
     <a href="partner-finder.html">Find partners!</a>
+    <a href="chats.html">Chat with your partners</a>
+
 
     <form action="logout.php" method="post">
         <button type="submit">Logout</button>

@@ -12,7 +12,7 @@ function fetchLoggedInLikes(likesData) {
 
 // fetch student data from database
 function fetchStudentData() {
-    fetch('get_students.php')
+    fetch('get-students.php')
         .then(response => response.json())
         .then(data => {
             console.log(data);
