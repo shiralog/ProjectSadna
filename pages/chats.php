@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chats</title>
     <style>
+        #messages {
+            max-height: 700px; /* Adjust this value as needed */
+            overflow-y: auto;
+        }
+
+        .mainContainer {
+            display: flex;
+        }
+
+        .mainContainer div {
+            flex: 1;
+        }
+
         /* General container styling */
         #partnersContainer {
             display: flex;
@@ -47,17 +60,46 @@
             font-size: 16px;
             color: #333;
         }
+
+        /* Chat container styling */
+        #chatContainer {
+            padding: 20px;
+        }
+
+        /* Message styling */
+        .message {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+        }
     </style>
 </head>
 
 <body>
-    <div>
-        <h3>My partners: </h3>
-        <div id="partnersContainer"></div>
+    <div class="mainContainer">
+        <div>
+            <h3>My partners: </h3>
+            <div id="partnersContainer"></div>
+        </div>
+        <div id="chat">
+            <h2>Currently chatting with: <span id="chatTitle"></span></span></h2>
+            <div id="chatContainer">
+                <div id="messages"></div>
+            </div>
+        </div>
     </div>
     <a href="/pages/dashboard.php">Back</a>
 
+    <script>
+        // Pass the PHP session variable to JavaScript
+        const userID = <?php session_start(); echo json_encode($_SESSION['ID']); ?>;
+    </script>
     <script src="/javascript/load-partners.js"></script>
+    <script src="/javascript/chat.js"></script>
 </body>
 
 </html>

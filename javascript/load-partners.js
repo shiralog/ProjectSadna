@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     partnersDiv.innerHTML = `<p>Error: ${data.error}</p>`;
                 } else if (data.length > 0) {
                     const partnersList = data.map(partner => `
-                        <div class="partnerCard" data-partnerID="${partner.ID}">
+                        <div class="partnerCard" data-partnerID="${partner.ID}" data-partnerFullName="${partner.firstName} ${partner.lastName}">
                         <p>${partner.firstName} ${partner.lastName}</p>
                         <p id="partnerID">${partner.ID}</p>
                         <p>${partner.profileImagePath}</p>
@@ -19,7 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Add event listeners to each card
                     document.querySelectorAll('.partnerCard').forEach(card => {
                         card.addEventListener('click', function () {
-                            console.log(this.getAttribute('data-partnerID'));
+                            const chatTitle = document.getElementById('chatTitle');
+                            chatTitle.textContent = this.getAttribute('data-partnerFullName');
+                            openChat(this.getAttribute('data-partnerID'), this.getAttribute('data-partnerFullName'));
                         });
                     });
                 } else {
