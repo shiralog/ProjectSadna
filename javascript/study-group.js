@@ -46,6 +46,7 @@ function loadStudyGroups() {
                     let groupManagerText = '';
                     let addPartnerButton = '';
                     let removePartnerButton = '';
+                    let viewGroupMembersButton = '';
 
                     if (group.GroupManagerID === userID) {
                         groupManagerText = `<p>You are this group's manager</p>`;
@@ -55,6 +56,9 @@ function loadStudyGroups() {
                         if (group.NumberOfStudents > 1) {
                             removePartnerButton = `<button class="removePartnerButton" data-groupID="${group.GroupID}">Remove Partner</button>`;
                         }
+                        if (group.NumberOfStudents > 0) {
+                            viewGroupMembersButton = `<button class="viewGroupMembers" data-groupID="${group.GroupID}">View Members</button>`;
+                        }
                     }
 
                     return `
@@ -63,6 +67,7 @@ function loadStudyGroups() {
                             <p>Group Description: ${group.GroupDescription}</p>
                             <p>Number of Students: ${group.NumberOfStudents}/6</p>
                             ${groupManagerText}
+                            ${viewGroupMembersButton}
                             ${addPartnerButton}
                             ${removePartnerButton}
                         </div>
@@ -82,6 +87,13 @@ function loadStudyGroups() {
                     button.addEventListener('click', function () {
                         const groupID = this.getAttribute('data-groupID');
                         showRemovePartnerModal(groupID);
+                    });
+                });
+
+                document.querySelectorAll('.viewGroupMembers').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const groupID = this.getAttribute('data-groupID');
+                        viewGroupMembers(groupID);
                     });
                 });
             } else {
@@ -192,6 +204,48 @@ function removePartner(groupID, partnerID) {
             } else {
                 alert(data.error);
             }
+        });
+}
+
+function viewGroupMembers(groupID) {
+    fetch(`get-group-members.php?groupID=${groupID}`)
+        .then(response => response.json())
+        .then(groupMembers => {
+            let modalContent = '<h2>Group Members:</h2>';
+            modalContent += '<div class="member-list">';
+            groupMembers.forEach(member => {
+                modalContent += `<div>${member.firstName} ${member.lastName} <button onclick="makeManager(${groupID}, ${member.ID})">Make Manager</button></div>`;
+            });
+            modalContent += '</div>';
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modal').style.display = 'flex';
+        })
+        .catch(error => {
+            console.error('Error fetching group members:', error);
+            alert('An error occurred while fetching group members.');
+        });
+}
+
+function makeManager(groupID, memberID) {
+    fetch('make-manager.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ groupID, memberID })
+    })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Member successfully made manager.');
+                // Optionally refresh the group members list or update UI
+            } else {
+                alert('Failed to make member manager. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error making member manager:', error);
+            alert('An error occurred while making member manager.');
         });
 }
 
