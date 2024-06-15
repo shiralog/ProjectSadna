@@ -214,7 +214,14 @@ function viewGroupMembers(groupID) {
             let modalContent = '<h2>Group Members:</h2>';
             modalContent += '<div class="member-list">';
             groupMembers.forEach(member => {
-                modalContent += `<div>${member.firstName} ${member.lastName} <button onclick="makeManager(${groupID}, ${member.ID})">Make Manager</button></div>`;
+                modalContent += `<div>${member.firstName} ${member.lastName}`;
+
+                // Check if member is already a manager
+                if (!member.isManager) {
+                    modalContent += ` <button onclick="makeManager(${groupID}, ${member.ID})">Make Manager</button>`;
+                }
+
+                modalContent += `</div>`;
             });
             modalContent += '</div>';
             document.getElementById('modalContent').innerHTML = modalContent;
@@ -239,6 +246,7 @@ function makeManager(groupID, memberID) {
             if (result.success) {
                 alert('Member successfully made manager.');
                 // Optionally refresh the group members list or update UI
+                viewGroupMembers(groupID);
             } else {
                 alert('Failed to make member manager. Please try again.');
             }
