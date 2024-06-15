@@ -8,73 +8,61 @@
         .groupCard {
             border: 1px solid #ccc;
             padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-        }
-        .groupCard p {
-            margin: 5px 0;
-        }
-        .buttonContainer {
-            display: flex;
-            gap: 10px;
+            margin: 10px 0;
         }
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
         }
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
             padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+            border-radius: 5px;
+            max-height: 70%;
+            overflow-y: auto;
         }
-        .close {
-            color: #aaa;
+        .close-btn {
             float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
             cursor: pointer;
+            color: red;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
     <a href="dashboard.php">Back</a>
-    <h1>Create a Study Group</h1>
-    <form id="createGroupForm">
-        <label for="groupName">Group Name:</label>
-        <input type="text" id="groupName" name="groupName" required><br><br>
+    <div>
+        <h1>Create a Study Group</h1>
+        <form id="createGroupForm">
+            <label for="groupName">Group Name:</label>
+            <input type="text" id="groupName" name="groupName" required><br><br>
 
-        <label for="groupDescription">Group Description:</label>
-        <textarea id="groupDescription" name="groupDescription"></textarea><br><br>
+            <label for="groupDescription">Group Description:</label>
+            <textarea id="groupDescription" name="groupDescription"></textarea><br><br>
 
-        <button type="submit">Create Group</button>
-    </form>
-    <div id="response"></div>
+            <button type="submit">Create Group</button>
+        </form>
+        <div id="response"></div>
+    </div>
 
-    <h1>Your Study Groups</h1>
+    <h1>Study Groups</h1>
     <div id="groupsContainer"></div>
 
-    <!-- The Modal -->
-    <div id="partnerModal" class="modal">
+    <!-- Modal for adding/removing partners -->
+    <div id="modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Select a Partner to Add</h2>
-            <div id="partnersList"></div>
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
         </div>
     </div>
 

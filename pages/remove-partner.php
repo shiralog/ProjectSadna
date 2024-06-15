@@ -1,23 +1,26 @@
 <?php
-session_start(); // Start the session
-
+session_start();
 require_once 'config.php';
 
-// Set the content type to JSON
 header('Content-Type: application/json');
 
 // Enable error reporting for debugging
-error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Check if the user is logged in
 if (!isset($_SESSION['ID'])) {
     echo json_encode(["error" => "User ID not set in session."]);
     exit;
 }
 
+if (!isset($_POST['groupID']) || !isset($_POST['removePartnerID'])) {
+    echo json_encode(["error" => "Required data not provided."]);
+    exit;
+}
+
 $groupID = $_POST['groupID'];
-$partnerID = $_POST['partnerID']; // ID of the partner to be removed
+$removePartnerID = $_POST['removePartnerID'];
 
 // Create connection
 $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -28,29 +31,39 @@ if ($conn->connect_error) {
     exit;
 }
 
-// SQL query to remove a partner
-$sql = "
-    UPDATE StudyGroups
-    SET 
-        StudentID2 = CASE WHEN StudentID2 = ? THEN NULL ELSE StudentID2 END,
-        StudentID3 = CASE WHEN StudentID3 = ? THEN NULL ELSE StudentID3 END,
-        StudentID4 = CASE WHEN StudentID4 = ? THEN NULL ELSE StudentID4 END,
-        StudentID5 = CASE WHEN StudentID5 = ? THEN NULL ELSE StudentID5 END,
-        StudentID6 = CASE WHEN StudentID6 = ? THEN NULL ELSE StudentID6 END,
-        NumberOfStudents = NumberOfStudents - 1
-    WHERE GroupID = ?
-";
+// Find the column where the partner ID is stored and set it to NULL
+$columns = ['StudentID2', 'StudentID3', 'StudentID4', 'StudentID5', 'StudentID6'];
+$columnToUpdate = null;
 
+foreach ($columns as $column) {
+    $sql = "SELECT $column FROM StudyGroups WHERE GroupID = ? AND $column = ? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $groupID, $removePartnerID);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows > 0) {
+        $columnToUpdate = $column;
+        break;
+    }
+}
+
+if ($columnToUpdate === null) {
+    echo json_encode(["error" => "Student not found in the group."]);
+    exit;
+}
+
+// Update the column to NULL
+$sql = "UPDATE StudyGroups SET $columnToUpdate = NULL, NumberOfStudents = NumberOfStudents - 1 WHERE GroupID = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iiiiis", $partnerID, $partnerID, $partnerID, $partnerID, $partnerID, $groupID);
+$stmt->bind_param("i", $groupID);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "Partner removed successfully."]);
 } else {
-    echo json_encode(["error" => "Error: " . $stmt->error]);
+    echo json_encode(["error" => "Failed to remove partner."]);
 }
 
-// Close the statement and connection
 $stmt->close();
 $conn->close();
 ?>
