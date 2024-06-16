@@ -9,11 +9,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Check if user ID is set in session
 if (!isset($_SESSION['ID'])) {
     echo json_encode(["error" => "User ID not set in session."]);
     exit;
 }
 
+// Check if required data (groupID and removePartnerID) is provided
 if (!isset($_POST['groupID']) || !isset($_POST['removePartnerID'])) {
     echo json_encode(["error" => "Required data not provided."]);
     exit;
@@ -53,8 +55,12 @@ if ($columnToUpdate === null) {
     exit;
 }
 
-// Update the column to NULL
-$sql = "UPDATE StudyGroups SET $columnToUpdate = NULL, NumberOfStudents = NumberOfStudents - 1 WHERE GroupID = ?";
+// Determine the corresponding IsManagerX column
+$columnNumber = substr($columnToUpdate, -1); // Extracts the number from column name (2, 3, 4, etc.)
+$isManagerColumn = "IsManager" . $columnNumber;
+
+// Update the StudentID and IsManager columns to NULL
+$sql = "UPDATE StudyGroups SET $columnToUpdate = NULL, $isManagerColumn = NULL, NumberOfStudents = NumberOfStudents - 1 WHERE GroupID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $groupID);
 

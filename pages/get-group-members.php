@@ -25,15 +25,16 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Fetch group members
+// Fetch group members with their manager status and group creator's details
 $sql = "
-    SELECT s.ID, s.firstName, s.lastName
-    FROM Students s
-    JOIN StudyGroups g ON (
-        s.ID = g.StudentID2 OR s.ID = g.StudentID3 OR 
-        s.ID = g.StudentID4 OR s.ID = g.StudentID5 OR s.ID = g.StudentID6
-    )
-    WHERE g.GroupID = ? AND s.ID IS NOT NULL
+    SELECT g.GroupManagerID, s.ID, s.firstName, s.lastName,
+           g.StudentID2, g.StudentID3, g.StudentID4, g.StudentID5, g.StudentID6,
+           g.IsManager2, g.IsManager3, g.IsManager4, g.IsManager5, g.IsManager6,
+           gm.firstName as managerFirstName, gm.lastName as managerLastName
+    FROM StudyGroups g
+    LEFT JOIN Students s ON s.ID IN (g.StudentID2, g.StudentID3, g.StudentID4, g.StudentID5, g.StudentID6)
+    LEFT JOIN Students gm ON g.GroupManagerID = gm.ID
+    WHERE g.GroupID = ?
 ";
 
 $stmt = $conn->prepare($sql);
@@ -42,12 +43,50 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $members = [];
+$groupManagerDetails = null;
 while ($row = $result->fetch_assoc()) {
-    $members[] = $row;
+    // Capture the group manager details
+    if (!$groupManagerDetails) {
+        $groupManagerDetails = [
+            'ID' => $row['GroupManagerID'],
+            'firstName' => $row['managerFirstName'],
+            'lastName' => $row['managerLastName'],
+            'isGroupCreator' => true,
+            'isManager' => true // Group creator is always a manager
+        ];
+    }
+
+    // Find which StudentID column this member belongs to
+    if ($row['ID'] !== null && $row['GroupManagerID'] != $row['ID']) {
+        for ($i = 2; $i <= 6; $i++) {
+            $studentIDColumnName = "StudentID" . $i;
+            if ($row[$studentIDColumnName] == $row['ID']) {
+                // Determine the corresponding IsManager column
+                $isManagerColumnName = "IsManager" . $i;
+                $row['isManager'] = (bool) $row[$isManagerColumnName];
+                $row['isGroupCreator'] = false;
+                $members[] = [
+                    'ID' => $row['ID'],
+                    'firstName' => $row['firstName'],
+                    'lastName' => $row['lastName'],
+                    'isGroupCreator' => false,
+                    'isManager' => $row['isManager']
+                ]; // Collect members without duplicates
+                break;
+            }
+        }
+    }
 }
 
 $stmt->close();
 $conn->close();
 
-echo json_encode($members);
+// Prepare the final output with group manager details as the first item
+$output = [];
+if ($groupManagerDetails) {
+    $output[] = $groupManagerDetails;
+}
+$output = array_merge($output, $members);
+
+echo json_encode($output); // Return the final list
 ?>
