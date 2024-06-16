@@ -170,7 +170,7 @@
             <p>Selected Date: <span id="selectedEventDate"></span></p>
             <p>Selected Classroom: <span id="selectedClassroom"></span></p>
             <label for="groupName">Study Group Name:</label>
-            <input type="text" id="groupName"><br><br>
+            <select id="groupNameSelect"></select><br><br>
             <label for="groupSize">Number of People:</label>
             <select id="groupSize">
                 <option value="1">1</option>
@@ -327,7 +327,9 @@
             const eventsTab = document.getElementById('eventsTab');
             const tablinks = document.getElementsByClassName("tablinks");
 
-            selectedDate.textContent = `${monthNames[month]} ${day}, ${year}`;
+            // Format the date as YYYY-MM-DD
+            const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            selectedDate.textContent = formattedDate;
 
             // Display Set an Event tab by default
             openTab(event, 'setEventTab');
@@ -345,7 +347,18 @@
                 classroomList.appendChild(listItem);
             });
 
+            // Fetch and display events for the selected date
+            fetchEvents(formattedDate);
+
             modal.style.display = 'block';
+        }
+
+        function convertToDate(dateStr) {
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero-based
+            const day = ('0' + date.getDate()).slice(-2);
+            return `${year}-${month}-${day}`;
         }
 
         function openTab(evt, tabName) {
@@ -359,6 +372,14 @@
             }
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+
+            if (tabName === 'eventsTab') {
+                const selectedDate = document.getElementById('selectedDate').textContent;
+                console.log("what" + selectedDate);
+                // Convert date to "YYYY-MM-DD" format for fetching events
+                const formattedDate = convertToDate(selectedDate);
+                fetchEvents(formattedDate);
+            }
         }
 
         function selectClassroom(classroom, date) {
@@ -373,9 +394,36 @@
             document.getElementById('selectedEventDate').textContent = date;
             document.getElementById('selectedClassroom').textContent = classroom;
 
+            // Fetch group names from backend (PHP script)
+            fetchGroupNames().then(groupNames => {
+                const groupNameSelect = document.getElementById('groupNameSelect');
+                groupNameSelect.innerHTML = '';
+                groupNames.forEach(group => {
+                    const option = document.createElement('option');
+                    option.textContent = group.GroupName + " " + group.GroupID;
+                    groupNameSelect.appendChild(option);
+                });
+            }).catch(error => {
+                console.error('Error fetching group names:', error);
+                // Optionally handle errors here
+            });
+
             // Populate the number of people dropdown
             const groupSizeSelect = document.getElementById('groupSize');
             groupSizeSelect.value = '1'; // Set default value
+        }
+
+        async function fetchGroupNames() {
+            try {
+                const response = await fetch('get-group-names.php');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch group names');
+                }
+                const groupNames = await response.json();
+                return groupNames;
+            } catch (error) {
+                throw error;
+            }
         }
 
         function closeSetEventModal() {
@@ -384,21 +432,42 @@
         }
 
         function setEvent() {
-            const groupName = document.getElementById('groupName').value;
+            const groupNameSelect = document.getElementById('groupNameSelect');
+            const groupName = groupNameSelect.options[groupNameSelect.selectedIndex].text;
             const groupSizeSelect = document.getElementById('groupSize');
             const groupSize = groupSizeSelect.options[groupSizeSelect.selectedIndex].value;
             const selectedDate = document.getElementById('selectedDate').textContent;
             const selectedClassroom = document.getElementById('selectedClassroom').textContent;
-            const eventDetails = `${groupName} (${groupSize} people)`;
 
-            // Create new event item
-            const eventsList = document.getElementById('eventsList');
-            const listItem = document.createElement('li');
-            listItem.textContent = `${eventDetails} - ${selectedClassroom} (${selectedDate})`;
-            eventsList.appendChild(listItem);
+            // Prepare data to send to PHP
+            const formData = new FormData();
+            formData.append('groupID', groupName.split(" ").pop());
+            const lastSpaceIndex = groupName.lastIndexOf(' ');
+            formData.append('groupName', groupName.substring(0, lastSpaceIndex));
+            formData.append('groupSize', groupSize);
+            formData.append('selectedDate', selectedDate);
+            formData.append('selectedClassroom', selectedClassroom);
 
-            // Close the modal
-            closeSetEventModal();
+            // Send AJAX request to insert-event.php
+            fetch('insert-event.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to insert event');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log(data); // Log success message (optional)
+                    // Optionally, you can update the UI or perform any other actions on success
+                    closeSetEventModal(); // Close the modal after successful insertion
+                })
+                .catch(error => {
+                    console.error('Error inserting event:', error);
+                    // Optionally handle errors here (e.g., show an error message to the user)
+                });
         }
 
         function closeModal() {
@@ -411,6 +480,31 @@
             if (event.target == modal) {
                 modal.style.display = 'none';
             }
+        }
+
+        function fetchEvents(date) {
+            console.log("and... : " + date);
+            fetch(`get-classroom-events.php?date=${encodeURIComponent(date)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const eventsList = document.getElementById('eventsList');
+                    eventsList.innerHTML = '';  // Clear previous events
+
+                    if (data.length === 0) {
+                        const noEventsMessage = document.createElement('li');
+                        noEventsMessage.textContent = "No events on this day";
+                        eventsList.appendChild(noEventsMessage);
+                    } else {
+                        data.forEach(event => {
+                            const eventItem = document.createElement('li');
+                            eventItem.textContent = `Group ID: ${event.StudyGroupID}, Group Name: ${event.StudyGroupName}, Classroom: ${event.ClassroomID}, Students: ${event.NumberOfStudents}`;
+                            eventsList.appendChild(eventItem);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching events:', error);
+                });
         }
 
         renderCalendar(currentMonth, currentYear);
