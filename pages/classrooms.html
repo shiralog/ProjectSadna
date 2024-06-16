@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Calendar with Classroom Schedule</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .calendar div {
+            padding: 20px;
+            border: 1px solid #ddd;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .header {
+            grid-column: span 7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-names {
+            grid-column: span 7;
+            display: contents;
+        }
+
+        .day-names div {
+            background-color: #f0f0f0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .classroom-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .classroom-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .occupied {
+            background-color: #d3d3d3;
+        }
+
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            margin-top: 10px;
+        }
+
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 15px;
+            transition: 0.3s;
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border-top: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calendar" id="calendar">
+        <div class="header">
+            <button onclick="changeMonth(-1)">Previous</button>
+            <h2 id="monthYear"></h2>
+            <button onclick="changeMonth(1)">Next</button>
+        </div>
+        <div class="day-names">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="selectedDate"></h2>
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'setEventTab')">Set an Event</button>
+                <button class="tablinks" onclick="openTab(event, 'eventsTab')">Events</button>
+            </div>
+            <div id="setEventTab" class="tabcontent">
+                <div id="classroomContainer">
+                    <ul id="classroomList" class="classroom-list"></ul>
+                </div>
+            </div>
+            <div id="eventsTab" class="tabcontent">
+                <ul id="eventsList" class="classroom-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="setEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSetEventModal()">&times;</span>
+            <h2>Set Event Details</h2>
+            <p>Selected Date: <span id="selectedEventDate"></span></p>
+            <p>Selected Classroom: <span id="selectedClassroom"></span></p>
+            <label for="groupName">Study Group Name:</label>
+            <input type="text" id="groupName"><br><br>
+            <label for="groupSize">Number of People:</label>
+            <select id="groupSize">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select><br><br>
+            <button onclick="setEvent()">Set</button>
+        </div>
+    </div>
+
+    <script>
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        const classrooms = [
+            {
+                "classroom": "101",
+                "working_hours": "8:00 AM - 5:00 PM"
+            },
+            {
+                "classroom": "102",
+                "working_hours": "8:30 AM - 5:30 PM"
+            },
+            {
+                "classroom": "103",
+                "working_hours": "9:00 AM - 6:00 PM"
+            },
+            {
+                "classroom": "104",
+                "working_hours": "8:00 AM - 4:00 PM"
+            },
+            {
+                "classroom": "105",
+                "working_hours": "8:00 AM - 5:00 PM"
+            },
+            {
+                "classroom": "106",
+                "working_hours": "9:00 AM - 6:00 PM"
+            },
+            {
+                "classroom": "107",
+                "working_hours": "8:00 AM - 3:00 PM"
+            },
+            {
+                "classroom": "108",
+                "working_hours": "10:00 AM - 7:00 PM"
+            },
+            {
+                "classroom": "109",
+                "working_hours": "8:00 AM - 5:00 PM"
+            },
+            {
+                "classroom": "110",
+                "working_hours": "8:30 AM - 4:30 PM"
+            },
+            {
+                "classroom": "111",
+                "working_hours": "9:00 AM - 6:00 PM"
+            },
+            {
+                "classroom": "112",
+                "working_hours": "8:00 AM - 4:00 PM"
+            },
+            {
+                "classroom": "113",
+                "working_hours": "8:00 AM - 5:00 PM"
+            },
+            {
+                "classroom": "114",
+                "working_hours": "9:30 AM - 5:30 PM"
+            },
+            {
+                "classroom": "115",
+                "working_hours": "8:00 AM - 3:00 PM"
+            },
+            {
+                "classroom": "116",
+                "working_hours": "8:00 AM - 4:00 PM"
+            },
+            {
+                "classroom": "117",
+                "working_hours": "9:00 AM - 5:00 PM"
+            },
+            {
+                "classroom": "118",
+                "working_hours": "8:00 AM - 6:00 PM"
+            },
+            {
+                "classroom": "119",
+                "working_hours": "8:30 AM - 4:30 PM"
+            },
+            {
+                "classroom": "120",
+                "working_hours": "8:00 AM - 5:00 PM"
+            }
+        ];
+
+        function renderCalendar(month, year) {
+            const calendar = document.getElementById('calendar');
+            const monthYear = document.getElementById('monthYear');
+            monthYear.textContent = `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month).getDay();
+            const daysInMonth = 32 - new Date(year, month, 32).getDate();
+
+            // Clear previous cells
+            const days = calendar.querySelectorAll('.day');
+            days.forEach(day => day.remove());
+
+            // Create blank cells for days before the first day of the month
+            for (let i = 0; i < firstDay; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('day');
+                calendar.appendChild(cell);
+            }
+
+            // Create cells for each day of the month
+            for (let i = 1; i <= daysInMonth; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('day');
+                const dateKey = `${month}-${i}-${year}`;
+                if (classrooms.length > 0) {
+                    cell.classList.add('occupied');
+                }
+                cell.textContent = i;
+                cell.onclick = function () {
+                    showModal(month, i, year);
+                };
+                calendar.appendChild(cell);
+            }
+        }
+
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+        }
+
+        function showModal(month, day, year) {
+            const modal = document.getElementById('myModal');
+            const selectedDate = document.getElementById('selectedDate');
+            const setEventTab = document.getElementById('setEventTab');
+            const eventsTab = document.getElementById('eventsTab');
+            const tablinks = document.getElementsByClassName("tablinks");
+
+            selectedDate.textContent = `${monthNames[month]} ${day}, ${year}`;
+
+            // Display Set an Event tab by default
+            openTab(event, 'setEventTab');
+
+            // Clear previous list items
+            const classroomList = document.getElementById('classroomList');
+            classroomList.innerHTML = '';
+
+            classrooms.forEach(classroom => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
+                listItem.onclick = function () {
+                    selectClassroom(classroom.classroom, `${monthNames[month]} ${day}, ${year}`);
+                };
+                classroomList.appendChild(listItem);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function selectClassroom(classroom, date) {
+            closeModal();
+            openSetEventModal(classroom, date);
+        }
+
+        function openSetEventModal(classroom, date) {
+            const setEventModal = document.getElementById('setEventModal');
+            setEventModal.style.display = 'block';
+            // Set the selected date and classroom in the set event modal
+            document.getElementById('selectedEventDate').textContent = date;
+            document.getElementById('selectedClassroom').textContent = classroom;
+
+            // Populate the number of people dropdown
+            const groupSizeSelect = document.getElementById('groupSize');
+            groupSizeSelect.value = '1'; // Set default value
+        }
+
+        function closeSetEventModal() {
+            const setEventModal = document.getElementById('setEventModal');
+            setEventModal.style.display = 'none';
+        }
+
+        function setEvent() {
+            const groupName = document.getElementById('groupName').value;
+            const groupSizeSelect = document.getElementById('groupSize');
+            const groupSize = groupSizeSelect.options[groupSizeSelect.selectedIndex].value;
+            const selectedDate = document.getElementById('selectedDate').textContent;
+            const selectedClassroom = document.getElementById('selectedClassroom').textContent;
+            const eventDetails = `${groupName} (${groupSize} people)`;
+
+            // Create new event item
+            const eventsList = document.getElementById('eventsList');
+            const listItem = document.createElement('li');
+            listItem.textContent = `${eventDetails} - ${selectedClassroom} (${selectedDate})`;
+            eventsList.appendChild(listItem);
+
+            // Close the modal
+            closeSetEventModal();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('myModal');
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('myModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        renderCalendar(currentMonth, currentYear);
+    </script>
+</body>
+
+</html>
