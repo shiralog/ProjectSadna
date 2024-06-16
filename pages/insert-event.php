@@ -15,6 +15,26 @@ if ($conn->connect_error) {
     exit;
 }
 
+// Function to generate a unique EventID
+function generateUniqueEventID($conn) {
+    do {
+        // Generate a random number between 100000 and 999999
+        $eventID = rand(100000, 999999);
+        
+        // Prepare and execute a query to check if the EventID already exists
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM Classrooms WHERE EventID = ?");
+        $stmt->bind_param('i', $eventID);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->close();
+
+        // If count is 0, the EventID is unique
+    } while ($count > 0);
+
+    return $eventID;
+}
+
 // Insert event into Classrooms table
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve POST data
@@ -27,12 +47,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Format date string into MySQL date format (YYYY-MM-DD)
     $formattedDate = date('Y-m-d', strtotime($selectedDate));
 
+    // Generate a unique EventID
+    $eventID = generateUniqueEventID($conn);
+
     // Prepare SQL statement to insert data
-    $stmt = $conn->prepare("INSERT INTO Classrooms (StudyGroupID, StudyGroupName, ClassroomID, Date, NumberOfStudents)
-                           VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO Classrooms (StudyGroupID, StudyGroupName, ClassroomID, Date, NumberOfStudents, EventID)
+                           VALUES (?, ?, ?, ?, ?, ?)");
 
     // Bind parameters
-    $stmt->bind_param('ssssi', $groupID, $groupName, $selectedClassroom, $formattedDate, $groupSize);
+    $stmt->bind_param('ssssii', $groupID, $groupName, $selectedClassroom, $formattedDate, $groupSize, $eventID);
 
     // Execute the statement
     if ($stmt->execute()) {

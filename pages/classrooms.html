@@ -320,6 +320,8 @@
             renderCalendar(currentMonth, currentYear);
         }
 
+        let occupiedClassrooms = [];
+
         function showModal(month, day, year) {
             const modal = document.getElementById('myModal');
             const selectedDate = document.getElementById('selectedDate');
@@ -338,20 +340,24 @@
             const classroomList = document.getElementById('classroomList');
             classroomList.innerHTML = '';
 
-            classrooms.forEach(classroom => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
-                listItem.onclick = function () {
-                    selectClassroom(classroom.classroom, `${monthNames[month]} ${day}, ${year}`);
-                };
-                classroomList.appendChild(listItem);
-            });
-
             // Fetch and display events for the selected date
-            fetchEvents(formattedDate);
+            fetchEvents2(formattedDate).then(() => {
+                // Filter out occupied classrooms
+                const availableClassrooms = classrooms.filter(classroomElement => !occupiedClassrooms.includes(classroomElement.classroom));
+                console.log(availableClassrooms);
+                availableClassrooms.forEach(classroom => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
+                    listItem.onclick = function () {
+                        selectClassroom(classroom.classroom, formattedDate);
+                    };
+                    classroomList.appendChild(listItem);
+                });
+            });
 
             modal.style.display = 'block';
         }
+
 
         function convertToDate(dateStr) {
             const date = new Date(dateStr);
@@ -378,7 +384,7 @@
                 console.log("what" + selectedDate);
                 // Convert date to "YYYY-MM-DD" format for fetching events
                 const formattedDate = convertToDate(selectedDate);
-                fetchEvents(formattedDate);
+                fetchEvents2(formattedDate);
             }
         }
 
@@ -483,10 +489,28 @@
         }
 
         function fetchEvents(date) {
-            console.log("and... : " + date);
-            fetch(`get-classroom-events.php?date=${encodeURIComponent(date)}`)
+            console.log("Fetching events for: " + date);
+            return fetch(`get-classroom-events.php?date=${encodeURIComponent(date)}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log("data1 :");
+                    console.log(data);
+                    const groupsToCheck = [];
+                    occupiedClassrooms = data.map(event => {
+                        groupsToCheck.push(event.StudyGroupID);
+                        return event.ClassroomID.toString();
+                    });
+                    fetch('check-if-user-is-in-groups.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: groupsToCheck
+                    })
+                        .then(response => response.json())
+                        .then(data => console.log(data))
+                        .catch(error => console.error('Error:', error));
+
                     const eventsList = document.getElementById('eventsList');
                     eventsList.innerHTML = '';  // Clear previous events
 
@@ -506,6 +530,149 @@
                     console.error('Error fetching events:', error);
                 });
         }
+
+        async function fetchEvents2(date) {
+            console.log("Fetching events for: " + date);
+            try {
+                const responseEvents = await fetch(`get-classroom-events.php?date=${encodeURIComponent(date)}`);
+                const dataEvents = await responseEvents.json();
+                console.log("Fetched events data:");
+                console.log(dataEvents);
+
+                const groupsToCheck = [];
+                occupiedClassrooms = dataEvents.map(event => {
+                    groupsToCheck.push(event.StudyGroupID);
+                    return event.ClassroomID.toString();
+                });
+
+                const responseGroups = await fetch('check-if-user-is-in-groups.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ group_ids: groupsToCheck })
+                });
+                const dataGroups = await responseGroups.json();
+                console.log("Groups check result:");
+                console.log(dataGroups);
+
+                const eventsList = document.getElementById('eventsList');
+                eventsList.innerHTML = '';  // Clear previous events
+
+                if (dataEvents.length === 0) {
+                    const noEventsMessage = document.createElement('li');
+                    noEventsMessage.textContent = "No events on this day";
+                    eventsList.appendChild(noEventsMessage);
+                } else {
+                    dataEvents.forEach(event => {
+                        const eventItem = document.createElement('li');
+                        console.log("Event object:");
+                        console.log(event);
+
+                        if (dataGroups[event.StudyGroupID]) {
+                            eventItem.innerHTML = `
+                        Group ID: ${event.StudyGroupID}, 
+                        Group Name: ${event.StudyGroupName}, 
+                        Classroom: ${event.ClassroomID}, 
+                        Students: ${event.NumberOfStudents} 
+                        <button onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
+                        <button onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>`;
+                        } else {
+                            eventItem.innerHTML = `
+                        Group ID: ${event.StudyGroupID}, 
+                        Group Name: ${event.StudyGroupName}, 
+                        Classroom: ${event.ClassroomID}, 
+                        Students: ${event.NumberOfStudents}`;
+                        }
+                        eventsList.appendChild(eventItem);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        }
+
+        function changeNumOfStudents(eventID) {
+            console.log("changeNumOfStudents called with EventID:", eventID); // Log EventID
+
+            // Function to validate input and prompt until valid input is provided
+            function promptForNumberOfStudents() {
+                let input = prompt("Enter the new number of students (between 1 and 6):");
+                if (input === null) {
+                    return null; // User clicked Cancel
+                }
+                input = parseInt(input);
+                if (isNaN(input) || input < 1 || input > 6) {
+                    alert("Please enter a number between 1 and 6.");
+                    return promptForNumberOfStudents(); // Prompt again if input is invalid
+                }
+                return input;
+            }
+
+            const newNumberOfStudents = promptForNumberOfStudents();
+
+            if (newNumberOfStudents !== null) {
+                fetch('change-num-of-students-event.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ event_id: eventID, new_number_of_students: newNumberOfStudents })
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === 'success') {
+                            alert('Number of students updated successfully.');
+                            fetchEvents2(document.getElementById('selectedDate').textContent);
+                        } else {
+                            alert('Error updating number of students.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+
+        function removeEvent(eventID, classroomID) {
+            console.log("removeEvent called with EventID:", eventID);  // Log EventID
+            if (confirm("Are you sure you want to delete this event?")) {
+                fetch('remove-event.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ event_id: eventID })
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        if (data === 'success') {
+                            alert('Event removed successfully.');
+                            fetchEvents2(document.getElementById('selectedDate').textContent);
+                        } else {
+                            alert('Error removing event.');
+                        }
+                    }).then(() => {
+                        // Filter out occupied classrooms
+                        const classroomList = document.getElementById('classroomList');
+                        classroomList.innerHTML = '';
+                        const updatedOccupiedClassrooms = occupiedClassrooms.filter(classroom => classroom !== classroomID.toString())
+                        const availableClassrooms = classrooms.filter(classroomElement => !updatedOccupiedClassrooms.includes(classroomElement.classroom));
+                        availableClassrooms.forEach(classroom => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
+                            listItem.onclick = function () {
+                                selectClassroom(classroom.classroom, formattedDate);
+                            };
+                            classroomList.appendChild(listItem);
+                        });
+                    })
+
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+
+
 
         renderCalendar(currentMonth, currentYear);
     </script>
