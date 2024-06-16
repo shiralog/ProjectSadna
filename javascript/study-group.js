@@ -48,16 +48,17 @@ function loadStudyGroups() {
                     let removePartnerButton = '';
                     let viewGroupMembersButton = '';
 
-                    if (group.GroupManagerID === userID) {
+                    if (group.NumberOfStudents > 0) {
+                        viewGroupMembersButton = `<button class="viewGroupMembers" data-groupID="${group.GroupID}">View Members</button>`;
+                    }
+
+                    if (group.GroupManagerID === userID || group[`IsManager${getIsManagerColumn(group, userID)}`]) {
                         groupManagerText = `<p>You are this group's manager</p>`;
                         if (group.NumberOfStudents < 6) {
                             addPartnerButton = `<button class="addPartnerButton" data-groupID="${group.GroupID}">Add Partner</button>`;
                         }
                         if (group.NumberOfStudents > 1) {
                             removePartnerButton = `<button class="removePartnerButton" data-groupID="${group.GroupID}">Remove Partner</button>`;
-                        }
-                        if (group.NumberOfStudents > 0) {
-                            viewGroupMembersButton = `<button class="viewGroupMembers" data-groupID="${group.GroupID}">View Members</button>`;
                         }
                     }
 
@@ -105,6 +106,17 @@ function loadStudyGroups() {
             const groupsDiv = document.getElementById('groupsContainer');
             groupsDiv.innerHTML = '<p>An error occurred while fetching the groups.</p>';
         });
+}
+
+function getIsManagerColumn(group, userID) {
+    for (let i = 2; i <= 6; i++) {
+        const studentIDColumn = `StudentID${i}`;
+        const isManagerColumn = `IsManager${i}`;
+        if (group[studentIDColumn] === userID && group[isManagerColumn]) {
+            return i;
+        }
+    }
+    return null;
 }
 
 function showAddPartnerModal(groupID) {  // Changed line
@@ -156,8 +168,12 @@ function showRemovePartnerModal(groupID) {  // Changed line
         .then(groupMembers => {
             let modalContent = '<h2>Select a partner to remove:</h2>';
             modalContent += '<div class="partner-list">';
+            const groupCreatorID = groupMembers[0].ID;
             groupMembers.forEach(member => {
-                modalContent += `<div>${member.firstName} ${member.lastName} <button onclick="removePartner(${groupID}, ${member.ID})">Remove</button></div>`;
+                if (member.ID === groupCreatorID)
+                    modalContent += `<div>${member.firstName} ${member.lastName} ( Can't be removed )</div>`;
+                else
+                    modalContent += `<div>${member.firstName} ${member.lastName} <button onclick="removePartner(${groupID}, ${member.ID})">Remove</button></div>`;
             });
             modalContent += '</div>';
             document.getElementById('modalContent').innerHTML = modalContent;
@@ -211,13 +227,20 @@ function viewGroupMembers(groupID) {
     fetch(`get-group-members.php?groupID=${groupID}`)
         .then(response => response.json())
         .then(groupMembers => {
+            console.log(groupMembers);
             let modalContent = '<h2>Group Members:</h2>';
             modalContent += '<div class="member-list">';
+            let isLoggedInManager = false;
+            groupMembers.forEach(member => {
+                if (member.ID === userID) {
+                    isLoggedInManager = member.isManager;
+                }
+            })
+
             groupMembers.forEach(member => {
                 modalContent += `<div>${member.firstName} ${member.lastName}`;
-
                 // Check if member is already a manager
-                if (!member.isManager) {
+                if (isLoggedInManager && !member.isManager) {
                     modalContent += ` <button onclick="makeManager(${groupID}, ${member.ID})">Make Manager</button>`;
                 }
 
