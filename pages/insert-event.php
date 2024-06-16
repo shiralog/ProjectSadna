@@ -21,6 +21,9 @@ function generateUniqueEventID($conn) {
         // Generate a random number between 100000 and 999999
         $eventID = rand(100000, 999999);
         
+        // Declare $count here to ensure it is scoped correctly
+        $count = 0;
+
         // Prepare and execute a query to check if the EventID already exists
         $stmt = $conn->prepare("SELECT COUNT(*) FROM Classrooms WHERE EventID = ?");
         $stmt->bind_param('i', $eventID);
