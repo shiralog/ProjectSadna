@@ -55,12 +55,7 @@ $defaultIsCompleted = 0;
 $sql = "INSERT INTO Tasks (UserID, Title, Description, DueDate, TaskID, IsCompleted) VALUES (?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
 
-// Use a ternary operator to set $due_date to null if it's empty
-if ($due_date) {
-    $stmt->bind_param('isssii', $userID, $title, $description, $due_date, $taskID, $defaultIsCompleted);
-} else {
-    $stmt->bind_param('isssii', $userID, $title, $description, $due_date, $taskID, $defaultIsCompleted);
-}
+$stmt->bind_param('isssii', $userID, $title, $description, $due_date, $taskID, $defaultIsCompleted);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "Task created successfully."]);
