@@ -10,7 +10,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
         .then(response => response.text())
         .then(data => {
             console.log(data);
-            if (data === 'OK') {
+            if (data === 'Logged in successfully') {
                 window.location.href = '/pages/dashboard.php';
             } else {
                 document.getElementById('message').textContent = 'Incorrect email/password';

@@ -13,7 +13,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
             console.log(data.length);
 
             var messageElement = document.getElementById('message');
-            if (data === 'OK') {
+            if (data === 'Registered successfully') {
                 messageElement.textContent = 'Registration successful!';
                 messageElement.style.color = 'green';
             } else {

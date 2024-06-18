@@ -14,14 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check connection
     if ($conn->connect_error) {
-        echo "NOT OK";
+        echo "Error no connection";
         exit();
     }
 
     // Prepare and bind
     $stmt = $conn->prepare("SELECT * FROM Students WHERE EmailAddress = ? AND Password = ?");
     if ($stmt === false) {
-        echo "NOT OK";
+        echo "Error occurred while preparing the query";
         exit();
     }
     $stmt->bind_param("ss", $email, $password);
@@ -37,9 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Assign the FirstName to the session variable
         $_SESSION['firstName'] = $row['FirstName'];
         $_SESSION['ID'] = $row['ID'];
-        echo "OK";
+        echo "Logged in successfully";
     } else {
-        echo "NOT OK";
+        echo "Login failed";
     }
 
     // Close the statement and connection
