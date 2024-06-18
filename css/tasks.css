@@ -1,0 +1,58 @@
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 300px;
+            max-width: 100%;
+            overflow-y: auto;
+            /* Allow scrolling when content exceeds modal height */
+            max-height: 80vh;
+            /* Limit maximum height to 80% of viewport height */
+        }
+
+        /* Close button styles */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Modal background */
+        #modalBackground {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Style for archived tasks container */
+        #archivedTasks {
+            max-height: 400px;
+            /* Limit height of container */
+            overflow-y: auto;
+            /* Enable scrolling */
+        }
+
+        /* Style for each archived task */
+        .archived-task {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
