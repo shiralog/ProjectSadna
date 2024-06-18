@@ -1,5 +1,4 @@
 <?php
-
 session_start(); // Start the session
 
 require_once 'config.php';
@@ -47,6 +46,7 @@ function generateUniqueTicketID($conn) {
 }
 
 // Get form data
+$userID = $_SESSION['ID'];
 $fullName = $data['fullName'];
 $email = $data['email'];
 $issueTopic = $data['issueTopic'];
@@ -56,9 +56,9 @@ $dateOfSubmission = date("Y-m-d H:i:s");
 $status = 'Pending';
 
 // Insert into Reports table
-$sql = "INSERT INTO Reports (FullName, Email, IssueTopic, IssueContent, TicketID, DateOfSubmission, Status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO Reports (UserID, FullName, Email, IssueTopic, IssueContent, TicketID, DateOfSubmission, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ssssiss", $fullName, $email, $issueTopic, $issueContent, $ticketID, $dateOfSubmission, $status);
+$stmt->bind_param("issssiss", $userID, $fullName, $email, $issueTopic, $issueContent, $ticketID, $dateOfSubmission, $status);
 
 if ($stmt->execute()) {
     echo json_encode(["ticketID" => $ticketID]);

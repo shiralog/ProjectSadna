@@ -6,9 +6,12 @@ require_once 'config.php';
 // Set the content type to JSON
 header('Content-Type: application/json');
 
-// Check if the user is logged in
-if (!isset($_SESSION['ID'])) {
-    echo json_encode(["error" => "User ID not set in session."]);
+// Get the raw POST data
+$data = json_decode(file_get_contents('php://input'), true);
+
+// Check if TicketID is set
+if (!isset($data['ticketID'])) {
+    echo json_encode(["error" => "Ticket ID not provided."]);
     exit;
 }
 
@@ -21,27 +24,20 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Get Ticket ID from query parameter
-$ticketID = $_GET['ticketID'] ?? '';
+$ticketID = $data['ticketID'];
 
-// Search for issue in Reports table
-$sql = "SELECT TicketID, DateOfSubmission, IssueTopic, Status FROM Reports WHERE TicketID = ?";
+// Fetch the issue details including ResponseMessage
+$sql = "SELECT TicketID, DateOfSubmission, IssueTopic, Status, ResponseMessage FROM Reports WHERE TicketID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $ticketID);
 $stmt->execute();
-$stmt->store_result();
+$result = $stmt->get_result();
 
-if ($stmt->num_rows > 0) {
-    $stmt->bind_result($ticketID, $dateOfSubmission, $issueTopic, $status);
-    $stmt->fetch();
-    echo json_encode([
-        "ticketID" => $ticketID,
-        "dateOfSubmission" => $dateOfSubmission,
-        "issueTopic" => $issueTopic,
-        "status" => $status
-    ]);
+if ($result->num_rows > 0) {
+    $issue = $result->fetch_assoc();
+    echo json_encode($issue);
 } else {
-    echo json_encode(null); // Return null if no matching ticket found
+    echo json_encode(["error" => "No issue found with the provided Ticket ID."]);
 }
 
 $stmt->close();
