@@ -23,6 +23,7 @@ if (!isset($_SESSION['firstName'])) {
     <a href="chats.php">Chat with your partners</a>
     <a href="study-groups.php">Study Groups</a>
     <a href="classrooms.html">Classrooms</a>
+    <a href="tasks.php">Tasks</a>
 
 
     <form action="logout.php" method="post">
