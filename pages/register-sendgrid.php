@@ -46,7 +46,7 @@ function sendWelcomeEmail($emailAddress, $fullName) {
     $email->addTo($emailAddress, $fullName);
     $email->addContent("text/html", $htmlContent);
 
-    $sendgrid = new \SendGrid('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');
+    $sendgrid = new \SendGrid(SENDGRID_API_KEY);
 
     try {
         $response = $sendgrid->send($email);
