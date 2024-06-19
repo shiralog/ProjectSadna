@@ -3,26 +3,32 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
 
     var formData = new FormData(this);
 
-    fetch('register.php', {
+    fetch('register-sendgrid.php', {
         method: 'POST',
         body: formData
     })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            console.log(data);
-            console.log(data.length);
-
-            var messageElement = document.getElementById('message');
-            if (data === 'OK') {
-                messageElement.textContent = 'Registration successful!';
-                messageElement.style.color = 'green';
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = ''; // Clear previous messages
+            if (data.register.startsWith("Registered successfully")) {
+                messageDiv.classList.add('success-message');
+                messageDiv.classList.remove('error-message');
+                messageDiv.innerHTML += `<p>${data.register}</p>`;
             } else {
-                messageElement.textContent = data;
-                messageElement.style.color = 'red';
+                messageDiv.classList.add('error-message');
+                messageDiv.classList.remove('success-message');
+                messageDiv.innerHTML += `<p>${data.register}</p>`;
+            }
+            if (data.email !== 'sent') {
+                messageDiv.classList.add('error-message');
+                messageDiv.classList.remove('success-message');
+                console.log(data.email);
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('message').textContent = 'An error occurred. Please try again.';
+            const messageDiv = document.getElementById('message');
+            messageDiv.classList.add('error-message');
+            messageDiv.innerHTML = `<p>An unexpected error occurred: ${error}</p>`;
         });
 });

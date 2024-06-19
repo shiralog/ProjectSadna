@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetchReports();
 });
 
-function submitResponse(ticketID) {
+function submitResponse(ticketID, userID) {
     const responseMessage = document.getElementById('response_' + ticketID).value;
 
     if (responseMessage.trim() === '') {
@@ -28,6 +28,7 @@ function submitResponse(ticketID) {
         },
         body: JSON.stringify({
             ticketID: ticketID,
+            userID: userID,
             responseMessage: responseMessage,
         }),
     })
@@ -61,7 +62,7 @@ function fetchReports() {
                         <td>${report.DateOfSubmission}</td>
                         <td>
                             <input type="text" placeholder="Enter response" id="response_${report.TicketID}">
-                            <button onclick="submitResponse(${report.TicketID})">Submit</button>
+                            <button onclick="submitResponse(${report.TicketID},${report.UserID})">Submit</button>
                         </td>
                     `;
                     reportsTableBody.appendChild(row);

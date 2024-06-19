@@ -16,7 +16,7 @@ if (!isset($_SESSION['ID'])) {
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Check if data is properly received
-if (!isset($data['fullName'], $data['email'], $data['issueTopic'], $data['issueContent'])) {
+if (!isset($data['fullName'], $data['issueTopic'], $data['issueContent'])) {
     echo json_encode(["error" => "Incomplete form data received."]);
     exit;
 }
@@ -48,7 +48,6 @@ function generateUniqueTicketID($conn) {
 // Get form data
 $userID = $_SESSION['ID'];
 $fullName = $data['fullName'];
-$email = $data['email'];
 $issueTopic = $data['issueTopic'];
 $issueContent = $data['issueContent'];
 $ticketID = generateUniqueTicketID($conn);
@@ -56,9 +55,9 @@ $dateOfSubmission = date("Y-m-d H:i:s");
 $status = 'Pending';
 
 // Insert into Reports table
-$sql = "INSERT INTO Reports (UserID, FullName, Email, IssueTopic, IssueContent, TicketID, DateOfSubmission, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO Reports (UserID, FullName, IssueTopic, IssueContent, TicketID, DateOfSubmission, Status) VALUES (?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("issssiss", $userID, $fullName, $email, $issueTopic, $issueContent, $ticketID, $dateOfSubmission, $status);
+$stmt->bind_param("isssiss", $userID, $fullName, $issueTopic, $issueContent, $ticketID, $dateOfSubmission, $status);
 
 if ($stmt->execute()) {
     echo json_encode(["ticketID" => $ticketID]);
