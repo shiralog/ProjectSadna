@@ -7,7 +7,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT TicketID, IssueTopic, IssueContent, DateOfSubmission, ResponseMessage FROM Reports WHERE Status = 'Pending'";
+$sql = "SELECT UserID ,TicketID, IssueTopic, IssueContent, DateOfSubmission, ResponseMessage FROM Reports WHERE Status = 'Pending'";
 $result = $conn->query($sql);
 
 $reports = [];

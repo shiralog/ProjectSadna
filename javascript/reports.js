@@ -13,7 +13,6 @@ document.getElementById('searchForm').addEventListener('submit', function (event
 
 function submitIssue() {
     const fullName = document.getElementById('fullName').value;
-    const email = document.getElementById('email').value;
     const issueTopic = document.getElementById('issueTopic').value;
     const issueContent = document.getElementById('issueContent').value;
 
@@ -24,7 +23,6 @@ function submitIssue() {
         },
         body: JSON.stringify({
             fullName,
-            email,
             issueTopic,
             issueContent
         }),
