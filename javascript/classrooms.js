@@ -162,7 +162,7 @@ function showModal(month, day, year) {
             const listItem = document.createElement('li');
             listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
             listItem.onclick = function () {
-                selectClassroom(classroom.classroom, formattedDate);
+                selectClassroom(classroom.classroom, formattedDate, classroom.working_hours);
             };
             classroomList.appendChild(listItem);
         });
@@ -200,17 +200,18 @@ function openTab(evt, tabName) {
     }
 }
 
-function selectClassroom(classroom, date) {
+function selectClassroom(classroom, date, workingHours) {
     closeModal();
-    openSetEventModal(classroom, date);
+    openSetEventModal(classroom, date, workingHours);
 }
 
-function openSetEventModal(classroom, date) {
+function openSetEventModal(classroom, date, workingHours) {
     const setEventModal = document.getElementById('setEventModal');
     setEventModal.style.display = 'block';
     // Set the selected date and classroom in the set event modal
     document.getElementById('selectedEventDate').textContent = date;
     document.getElementById('selectedClassroom').textContent = classroom;
+    document.getElementById('selectedClassroomHours').textContent = workingHours;
 
     // Fetch group names from backend (PHP script)
     fetchGroupNames().then(groupNames => {
@@ -256,6 +257,7 @@ function setEvent() {
     const groupSize = groupSizeSelect.options[groupSizeSelect.selectedIndex].value;
     const selectedDate = document.getElementById('selectedDate').textContent;
     const selectedClassroom = document.getElementById('selectedClassroom').textContent;
+    const selectedClassroomHours = document.getElementById('selectedClassroomHours').textContent;
 
     // Prepare data to send to PHP
     const formData = new FormData();
@@ -265,6 +267,7 @@ function setEvent() {
     formData.append('groupSize', groupSize);
     formData.append('selectedDate', selectedDate);
     formData.append('selectedClassroom', selectedClassroom);
+    formData.append('selectedClassroomHours', selectedClassroomHours);
 
     // Send AJAX request to insert-event.php
     fetch('insert-event.php', {
@@ -306,7 +309,6 @@ async function fetchEvents(date) {
         const responseEvents = await fetch(`get-classroom-events.php?date=${encodeURIComponent(date)}`);
         const dataEvents = await responseEvents.json();
         console.log("Fetched events data:");
-        console.log(dataEvents);
 
         const groupsToCheck = [];
         occupiedClassrooms = dataEvents.map(event => {
@@ -392,7 +394,14 @@ function changeNumOfStudents(eventID) {
             .then(data => {
                 if (data === 'success') {
                     alert('Number of students updated successfully.');
-                    fetchEvents(document.getElementById('selectedDate').textContent);
+                    if (document.getElementById('selectedDate').textContent === '') {
+                        console.log("my events", document.getElementById('selectedDateMyEvents').textContent);
+                        fetchEvents(document.getElementById('selectedDateMyEvents').textContent);
+                        showMyEvents();
+                    } else {
+                        console.log("not my events", document.getElementById('selectedDate').textContent);
+                        fetchEvents(document.getElementById('selectedDate').textContent);
+                    }
                 } else {
                     alert('Error updating number of students.');
                 }
@@ -429,7 +438,7 @@ function removeEvent(eventID, classroomID) {
                     const listItem = document.createElement('li');
                     listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
                     listItem.onclick = function () {
-                        selectClassroom(classroom.classroom, formattedDate);
+                        selectClassroom(classroom.classroom, formattedDate, classroom.working_hours);
                     };
                     classroomList.appendChild(listItem);
                 });
@@ -438,5 +447,321 @@ function removeEvent(eventID, classroomID) {
             .catch(error => console.error('Error:', error));
     }
 }
+
+function showMyEvents() {
+    // Fetch group IDs for the logged-in user
+    fetchGroupIDs().then(groupIDs => {
+        const formData = new FormData();
+        formData.append('group_ids', JSON.stringify(groupIDs)); // Convert array to JSON string
+
+        // Send AJAX request to fetch user events
+        fetch('get-user-events.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user events');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetched events:', data);
+                displayUserEvents(data, isConnectedToOutlook);
+                // Process the events data as needed
+            })
+            .catch(error => {
+                console.error('Error fetching events:', error);
+                // Handle error scenarios
+            });
+    }).catch(error => {
+        console.error('Error fetching group IDs:', error);
+        // Handle error scenarios
+    });
+}
+
+async function fetchGroupIDs() {
+    try {
+        const response = await fetch('get-study-groups.php');
+        if (!response.ok) {
+            throw new Error('Failed to fetch group IDs');
+        }
+        const groupIDs = await response.json();
+        return groupIDs.map(group => group.GroupID);
+    } catch (error) {
+        throw error;
+    }
+}
+
+function displayUserEvents(events, isConnectedToOutlook) {
+    const userEventsModal = document.getElementById('userEventsModal');
+    const modalContent = userEventsModal.querySelector('.modal-content');
+
+    // Clear existing content
+    modalContent.innerHTML = '';
+
+    // Close button
+    const closeBtn = document.createElement('span');
+    closeBtn.classList.add('close');
+    closeBtn.onclick = () => {
+        userEventsModal.style.display = 'none';
+        // Optionally, remove modal from DOM
+        // userEventsModal.remove();
+    };
+    closeBtn.textContent = '×';
+    modalContent.appendChild(closeBtn);
+
+    // Outlook connection status
+    const outlookStatus = document.createElement('div');
+    outlookStatus.textContent = 'Outlook connected: ';
+    const outlookIcon = document.createElement('span');
+    outlookIcon.textContent = isConnectedToOutlook ? '✔️' : '❌';
+    outlookIcon.classList.add('outlook-status');
+    outlookStatus.appendChild(outlookIcon);
+    modalContent.appendChild(outlookStatus);
+
+    // Connect to Outlook button
+    const connectToOutlookBtn = document.createElement('button');
+    connectToOutlookBtn.id = 'connect-outlook-btn';
+    connectToOutlookBtn.textContent = isConnectedToOutlook ? 'Connected' : 'Connect to Outlook';
+    if (!isConnectedToOutlook) {
+        connectToOutlookBtn.onclick = () => {
+            // Initiate Outlook OAuth authentication
+            window.location.href = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize' +
+                `?client_id=${client_id}` + // Replace with your client ID
+                '&response_type=code' +
+                '&redirect_uri=http://localhost:3000/pages/callback.php' + // Replace with your redirect URI
+                '&scope=Calendars.ReadWrite' + // Requesting calendar permissions
+                '&state=12345'; // Optional: Secure state parameter to prevent CSRF
+        };
+    } else {
+        connectToOutlookBtn.disabled = true;
+    }
+    modalContent.appendChild(connectToOutlookBtn);
+
+    // Header for events
+    const header = document.createElement('h2');
+    header.textContent = 'Your Events';
+    modalContent.appendChild(header);
+
+    // List of events
+    const eventsList = document.createElement('ul');
+    eventsList.classList.add('events-list');
+    if (events.length !== 0) {
+        events.forEach(event => {
+            console.log(event);
+            const listItem = document.createElement('li');
+            const eventInfo = document.createElement('div');
+            eventInfo.classList.add('event-info');
+
+            // Formatting the event details
+            eventInfo.innerHTML = `
+            <p><strong>Group Name:</strong> ${event.StudyGroupName}</p>
+            <p><strong>Classroom:</strong> ${event.ClassroomID}</p>
+            <p><strong>Number of Students:</strong> ${event.NumberOfStudents}</p>
+            <p id='selectedDateMyEvents'><strong>Date:</strong> ${event.Date}</p>
+            <p><strong>Hours:</strong> ${event.Hours}</p>
+            <button onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
+            <button onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>
+        `;
+
+            // Share event button (enabled if connected to Outlook)
+            const shareEventBtn = document.createElement('button');
+            shareEventBtn.classList.add('share-event');
+            shareEventBtn.textContent = isConnectedToOutlook ? 'Share event' : 'Outlook not connected';
+            shareEventBtn.disabled = !isConnectedToOutlook;
+            shareEventBtn.style.cursor = isConnectedToOutlook ? 'pointer' : 'not-allowed';
+
+            shareEventBtn.onclick = async () => {
+                try {
+                    // Check if Outlook is connected
+                    if (!isConnectedToOutlook) {
+                        alert('Outlook is not connected.');
+                        return;
+                    }
+
+                    const modal = document.getElementById('shareEventOptionsModal');
+                    userEventsModal.style.display = 'none';
+                    modal.style.display = 'block';
+                    const shareForMyselfBtn = document.getElementById('shareForMyselfBtn');
+                    const shareForGroupBtn = document.getElementById('shareForGroupBtn');
+
+                    shareForMyselfBtn.onclick = () => shareEvent(event, false);
+                    shareForGroupBtn.onclick = () => shareEvent(event, true);
+
+                } catch (error) {
+                    console.error('Error sharing event:', error);
+                    alert('Failed to share event. Please try again later.');
+                }
+            };
+
+            eventInfo.appendChild(shareEventBtn);
+            listItem.appendChild(eventInfo);
+            eventsList.appendChild(listItem);
+        });
+
+        modalContent.appendChild(eventsList);
+    } else {
+        header.style.display = 'none';
+        outlookIcon.style.display = 'none';
+        outlookStatus.style.display = 'none';
+        connectToOutlookBtn.style.display = 'none';
+        const message = document.createElement('h2')
+        message.textContent = "No events.. 🙁"
+        modalContent.appendChild(message);
+    }
+
+    // Display the modal
+    userEventsModal.style.display = 'block';
+}
+
+
+async function shareEvent(event, shareWithGroup) {
+    try {
+        // Assuming Hours variable is available and holds a string like "8:00 AM - 5:00 PM"
+        const hours = event.Hours; // Add this line to access the Hours variable for each event
+        const [startTime, endTime] = hours.split(' - ');
+
+        // Function to format date and time to ISO string
+        const formatDateTime = (date, time) => {
+            const [hour, minute] = time.split(/[: ]/);
+            const period = time.split(' ')[1];
+            let hour24 = parseInt(hour);
+            if (period === 'PM' && hour24 < 12) hour24 += 12;
+            if (period === 'AM' && hour24 === 12) hour24 = 0;
+            const dateTime = new Date(date);
+            dateTime.setHours(hour24);
+            dateTime.setMinutes(parseInt(minute));
+            return dateTime.toISOString();
+        };
+
+        // Construct event data for Microsoft Graph API
+        const eventData = {
+            subject: `Group Name: ${event.StudyGroupName}`,
+            start: {
+                dateTime: formatDateTime(event.Date, startTime), // Format start dateTime
+                timeZone: 'UTC' // Update timezone as necessary
+            },
+            end: {
+                dateTime: formatDateTime(event.Date, endTime), // Format end dateTime
+                timeZone: 'UTC' // Update timezone as necessary
+            },
+            location: {
+                displayName: `Classroom: ${event.ClassroomID}`
+            }
+        };
+
+        let membersIDs = [userID];
+        if (shareWithGroup) {
+            try {
+                const response = await fetch(`get-group-members.php?groupID=${event.StudyGroupID}`);
+                const groupMembers = await response.json();
+
+                membersIDs = groupMembers.map(groupMember => groupMember.ID);
+                const membersIDWithoutLoggedInUser = groupMembers.filter(member => member.ID !== userID).map(groupMember => groupMember.ID);
+
+                const formData = new URLSearchParams();
+                formData.append('ids', JSON.stringify(membersIDWithoutLoggedInUser));
+
+                const responseEmails = await fetch('get-emails.php', { method: 'POST', body: formData });
+                const emails = await responseEmails.json();
+                console.log(emails);
+
+                eventData.attendees = emails.map(email => ({ emailAddress: { address: email }, type: 'required' }));
+            } catch (error) {
+                console.log('error: ', error);
+            }
+        }
+
+        const formDataCheck = new URLSearchParams();
+        formDataCheck.append('userId', userID);
+        formDataCheck.append('eventId', event.EventID);
+
+        // Check if the event is already shared
+        const checkResponse = await fetch('check-event-shared.php', {
+            method: 'POST',
+            body: formDataCheck
+        });
+
+        const checkResult = await checkResponse.json();
+        console.log(checkResult);
+
+        if (checkResult.shared) {
+            alert('You have shared this event already');
+            return;
+        }
+
+        // Call Microsoft Graph API to create event
+        const response = await fetch('https://graph.microsoft.com/v1.0/me/events', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${sessionToken}`, // Use the stored access token
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(eventData)
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            // Check for invalid token error and prompt re-authentication
+            if (errorResponse.error && errorResponse.error.code === 'InvalidAuthenticationToken') {
+                alert('Your session has expired. Please authenticate with Microsoft again.');
+                // Redirect to Microsoft OAuth authentication
+                window.location.href = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize' +
+                    `?client_id=${client_id}` + // Replace with your client ID
+                    '&response_type=code' +
+                    '&redirect_uri=http://localhost:3000/pages/callback.php' + // Replace with your redirect URI
+                    '&scope=Calendars.ReadWrite' + // Requesting calendar permissions
+                    '&state=12345'; // Optional: Forces consent prompt every time
+                return;
+            }
+            throw new Error(`Failed to share event: ${response.status} - ${response.statusText}`);
+        }
+
+        const formDataInsert = new URLSearchParams();
+        formDataInsert.append('userIdList', JSON.stringify(membersIDs));
+        formDataInsert.append('eventId', event.EventID);
+
+        // Insert event into EventsInCalendar table
+        const responseInsert = await fetch('insert-event-in-calendar.php', {
+            method: 'POST',
+            body: formDataInsert
+        });
+
+        if (!responseInsert.ok) {
+            throw new Error(`Failed to insert membersIDs into EventsInCalendar table: ${response.status} - ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('Insert membersIDs into EventsInCalendar table:', result);
+
+        alert('Event shared successfully with Outlook calendar!');
+    } catch (error) {
+        console.error('Error sharing event:', error);
+        alert('Failed to share event. Please try again later.');
+    } finally {
+        closeShareEventOptionsModal();
+    }
+};
+
+const closeShareEventOptionsModal = () => {
+    const modal = document.getElementById('shareEventOptionsModal');
+    modal.style.display = 'none';
+};
+
+// Close modal on outside click
+window.onclick = function (event) {
+    const userEventsModal = document.getElementById('userEventsModal');
+    const myModal = document.getElementById('myModal');
+
+    if (event.target == userEventsModal) {
+        userEventsModal.style.display = 'none';
+    }
+
+    if (event.target == myModal) {
+        myModal.style.display = 'none';
+    }
+};
+
 
 renderCalendar(currentMonth, currentYear);

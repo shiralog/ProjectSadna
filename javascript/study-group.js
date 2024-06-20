@@ -47,9 +47,14 @@ function loadStudyGroups() {
                     let addPartnerButton = '';
                     let removePartnerButton = '';
                     let viewGroupMembersButton = '';
+                    let deleteGroup = '';
 
                     if (group.NumberOfStudents > 0) {
                         viewGroupMembersButton = `<button class="viewGroupMembers" data-groupID="${group.GroupID}">View Members</button>`;
+                    }
+
+                    if (group.GroupManagerID === userID) {
+                        deleteGroup = `<button class="deleteGroupButton" data-groupID="${group.GroupID}">Delete Group</button>`;
                     }
 
                     if (group.GroupManagerID === userID || group[`IsManager${getIsManagerColumn(group, userID)}`]) {
@@ -71,6 +76,7 @@ function loadStudyGroups() {
                             ${viewGroupMembersButton}
                             ${addPartnerButton}
                             ${removePartnerButton}
+                            ${deleteGroup}
                         </div>
                     `;
                 }).join('');
@@ -97,6 +103,13 @@ function loadStudyGroups() {
                         viewGroupMembers(groupID);
                     });
                 });
+
+                document.querySelectorAll('.deleteGroupButton').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const groupID = this.getAttribute('data-groupID');
+                        deleteGroup(groupID);
+                    });
+                });
             } else {
                 groupsDiv.innerHTML = '<p>No groups found.</p>';
             }
@@ -106,6 +119,31 @@ function loadStudyGroups() {
             const groupsDiv = document.getElementById('groupsContainer');
             groupsDiv.innerHTML = '<p>An error occurred while fetching the groups.</p>';
         });
+}
+
+function deleteGroup(groupID) {
+    if (confirm("Are you sure you want to delete this group?")) {
+        fetch('delete-group.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ groupID: groupID })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Group deleted successfully.');
+                    loadStudyGroups(); // Reload the groups
+                } else {
+                    alert('Error deleting group: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting group:', error);
+                alert('An error occurred while deleting the group.');
+            });
+    }
 }
 
 function getIsManagerColumn(group, userID) {
@@ -171,7 +209,7 @@ function showRemovePartnerModal(groupID) {  // Changed line
             const groupCreatorID = groupMembers[0].ID;
             groupMembers.forEach(member => {
                 if (member.ID === groupCreatorID)
-                    modalContent += `<div>${member.firstName} ${member.lastName} ( Can't be removed )</div>`;
+                    modalContent += `<div>${member.firstName} ${member.lastName} ( Group creator can't be removed )</div>`;
                 else
                     modalContent += `<div>${member.firstName} ${member.lastName} <button onclick="removePartner(${groupID}, ${member.ID})">Remove</button></div>`;
             });

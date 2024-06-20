@@ -1,3 +1,5 @@
+<?php include 'session_verify.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,6 +42,7 @@
     </style>
 </head>
 <body>
+    <?php include 'navbar.php'; ?>
     <a href="dashboard.php">Back</a>
     <div>
         <h1>Create a Study Group</h1>
@@ -68,7 +71,7 @@
 
     <script>
         // Pass the PHP session variable to JavaScript
-        const userID = <?php session_start(); echo json_encode($_SESSION['ID']); ?>;
+        const userID = <?php echo json_encode($_SESSION['ID']); ?>;
         console.log(userID);
     </script>
     <script src="/javascript/study-group.js"></script>

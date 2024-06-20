@@ -1,3 +1,5 @@
+<?php include 'session_verify.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -80,6 +82,7 @@
 </head>
 
 <body>
+    <?php include 'navbar.php'; ?>
     <div class="mainContainer">
         <div>
             <h3>My partners: </h3>
