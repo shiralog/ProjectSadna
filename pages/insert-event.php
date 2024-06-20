@@ -46,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $groupSize = $_POST['groupSize'];
     $selectedDate = $_POST['selectedDate'];
     $selectedClassroom = $_POST['selectedClassroom'];
+    $selectedClassroomHours = $_POST['selectedClassroomHours'];
 
     // Format date string into MySQL date format (YYYY-MM-DD)
     $formattedDate = date('Y-m-d', strtotime($selectedDate));
@@ -54,11 +55,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $eventID = generateUniqueEventID($conn);
 
     // Prepare SQL statement to insert data
-    $stmt = $conn->prepare("INSERT INTO Classrooms (StudyGroupID, StudyGroupName, ClassroomID, Date, NumberOfStudents, EventID)
-                           VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO Classrooms (StudyGroupID, StudyGroupName, ClassroomID, Hours, Date, NumberOfStudents, EventID)
+                           VALUES (?, ?, ?, ?, ?, ?, ?)");
 
     // Bind parameters
-    $stmt->bind_param('ssssii', $groupID, $groupName, $selectedClassroom, $formattedDate, $groupSize, $eventID);
+    $stmt->bind_param('sssssii', $groupID, $groupName, $selectedClassroom, $selectedClassroomHours, $formattedDate, $groupSize, $eventID);
 
     // Execute the statement
     if ($stmt->execute()) {
