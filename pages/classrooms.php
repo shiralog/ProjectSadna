@@ -74,6 +74,15 @@
         </div>
     </div>
 
+    <div id="shareEventOptionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeShareEventOptionsModal()">&times;</span>
+            <h2>Share Event</h2>
+            <button id="shareForMyselfBtn">For myself</button>
+            <button id="shareForGroupBtn">Myself and all group members</button>
+        </div>
+    </div>
+
     <!-- <div id="myEventsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeMyEventsModal()">&times;</span>
@@ -126,6 +135,7 @@
     <script>
         let isConnectedToOutlook = <?php echo isset($_SESSION['access_token']) ? 'true' : 'false'; ?>;
         let sessionToken = "<?php echo isset($_SESSION['access_token']) ? $_SESSION['access_token'] : ""; ?>";
+        let userID = <?php echo $_SESSION['ID'] ?>;
     </script>
 
     <!-- Include client_id from CalendarAPISecrets.php -->

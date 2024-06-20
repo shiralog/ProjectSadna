@@ -309,7 +309,6 @@ async function fetchEvents(date) {
         const responseEvents = await fetch(`get-classroom-events.php?date=${encodeURIComponent(date)}`);
         const dataEvents = await responseEvents.json();
         console.log("Fetched events data:");
-        console.log(dataEvents);
 
         const groupsToCheck = [];
         occupiedClassrooms = dataEvents.map(event => {
@@ -395,7 +394,14 @@ function changeNumOfStudents(eventID) {
             .then(data => {
                 if (data === 'success') {
                     alert('Number of students updated successfully.');
-                    fetchEvents(document.getElementById('selectedDate').textContent);
+                    if (document.getElementById('selectedDate').textContent === '') {
+                        console.log("my events", document.getElementById('selectedDateMyEvents').textContent);
+                        fetchEvents(document.getElementById('selectedDateMyEvents').textContent);
+                        showMyEvents();
+                    } else {
+                        console.log("not my events", document.getElementById('selectedDate').textContent);
+                        fetchEvents(document.getElementById('selectedDate').textContent);
+                    }
                 } else {
                     alert('Error updating number of students.');
                 }
@@ -552,8 +558,11 @@ function displayUserEvents(events, isConnectedToOutlook) {
             eventInfo.innerHTML = `
             <p><strong>Group Name:</strong> ${event.StudyGroupName}</p>
             <p><strong>Classroom:</strong> ${event.ClassroomID}</p>
-            <p><strong>Date:</strong> ${event.Date}</p>
+            <p><strong>Number of Students:</strong> ${event.NumberOfStudents}</p>
+            <p id='selectedDateMyEvents'><strong>Date:</strong> ${event.Date}</p>
             <p><strong>Hours:</strong> ${event.Hours}</p>
+            <button onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
+            <button onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>
         `;
 
             // Share event button (enabled if connected to Outlook)
@@ -571,68 +580,15 @@ function displayUserEvents(events, isConnectedToOutlook) {
                         return;
                     }
 
-                    // Assuming Hours variable is available and holds a string like "8:00 AM - 5:00 PM"
-                    const hours = event.Hours; // Add this line to access the Hours variable for each event
-                    const [startTime, endTime] = hours.split(' - ');
+                    const modal = document.getElementById('shareEventOptionsModal');
+                    userEventsModal.style.display = 'none';
+                    modal.style.display = 'block';
+                    const shareForMyselfBtn = document.getElementById('shareForMyselfBtn');
+                    const shareForGroupBtn = document.getElementById('shareForGroupBtn');
 
-                    // Function to format date and time to ISO string
-                    const formatDateTime = (date, time) => {
-                        const [hour, minute] = time.split(/[: ]/);
-                        const period = time.split(' ')[1];
-                        let hour24 = parseInt(hour);
-                        if (period === 'PM' && hour24 < 12) hour24 += 12;
-                        if (period === 'AM' && hour24 === 12) hour24 = 0;
-                        const dateTime = new Date(date);
-                        dateTime.setHours(hour24);
-                        dateTime.setMinutes(parseInt(minute));
-                        return dateTime.toISOString();
-                    };
+                    shareForMyselfBtn.onclick = () => shareEvent(event, false);
+                    shareForGroupBtn.onclick = () => shareEvent(event, true);
 
-                    // Construct event data for Microsoft Graph API
-                    const eventData = {
-                        subject: `Group Name: ${event.StudyGroupName}`,
-                        start: {
-                            dateTime: formatDateTime(event.Date, startTime), // Format start dateTime
-                            timeZone: 'UTC' // Update timezone as necessary
-                        },
-                        end: {
-                            dateTime: formatDateTime(event.Date, endTime), // Format end dateTime
-                            timeZone: 'UTC' // Update timezone as necessary
-                        },
-                        location: {
-                            displayName: `Classroom: ${event.ClassroomID}`
-                        }
-                        // Add more properties as needed (description, attendees, etc.)
-                    };
-
-                    // Call Microsoft Graph API to create event
-                    const response = await fetch('https://graph.microsoft.com/v1.0/me/events', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${sessionToken} ?>`, // Use the stored access token
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(eventData)
-                    });
-
-                    if (!response.ok) {
-                        const errorResponse = await response.json();
-                        // Check for invalid token error and prompt re-authentication
-                        if (errorResponse.error && errorResponse.error.code === 'InvalidAuthenticationToken') {
-                            alert('Your session has expired. Please authenticate with Microsoft again.');
-                            // Redirect to Microsoft OAuth authentication
-                            window.location.href = window.location.href = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize' +
-                                `?client_id=${client_id}` + // Replace with your client ID
-                                '&response_type=code' +
-                                '&redirect_uri=http://localhost:3000/pages/callback.php' + // Replace with your redirect URI
-                                '&scope=Calendars.ReadWrite' + // Requesting calendar permissions
-                                '&state=12345'; // Optional: Forces consent prompt every time
-                            return;
-                        }
-                        throw new Error(`Failed to share event: ${response.status} - ${response.statusText}`);
-                    }
-
-                    alert('Event shared successfully with Outlook calendar!');
                 } catch (error) {
                     console.error('Error sharing event:', error);
                     alert('Failed to share event. Please try again later.');
@@ -660,7 +616,138 @@ function displayUserEvents(events, isConnectedToOutlook) {
 }
 
 
+async function shareEvent(event, shareWithGroup) {
+    try {
+        // Assuming Hours variable is available and holds a string like "8:00 AM - 5:00 PM"
+        const hours = event.Hours; // Add this line to access the Hours variable for each event
+        const [startTime, endTime] = hours.split(' - ');
 
+        // Function to format date and time to ISO string
+        const formatDateTime = (date, time) => {
+            const [hour, minute] = time.split(/[: ]/);
+            const period = time.split(' ')[1];
+            let hour24 = parseInt(hour);
+            if (period === 'PM' && hour24 < 12) hour24 += 12;
+            if (period === 'AM' && hour24 === 12) hour24 = 0;
+            const dateTime = new Date(date);
+            dateTime.setHours(hour24);
+            dateTime.setMinutes(parseInt(minute));
+            return dateTime.toISOString();
+        };
+
+        // Construct event data for Microsoft Graph API
+        const eventData = {
+            subject: `Group Name: ${event.StudyGroupName}`,
+            start: {
+                dateTime: formatDateTime(event.Date, startTime), // Format start dateTime
+                timeZone: 'UTC' // Update timezone as necessary
+            },
+            end: {
+                dateTime: formatDateTime(event.Date, endTime), // Format end dateTime
+                timeZone: 'UTC' // Update timezone as necessary
+            },
+            location: {
+                displayName: `Classroom: ${event.ClassroomID}`
+            }
+        };
+
+        let membersIDs = [userID];
+        if (shareWithGroup) {
+            try {
+                const response = await fetch(`get-group-members.php?groupID=${event.StudyGroupID}`);
+                const groupMembers = await response.json();
+
+                membersIDs = groupMembers.map(groupMember => groupMember.ID);
+                const membersIDWithoutLoggedInUser = groupMembers.filter(member => member.ID !== userID).map(groupMember => groupMember.ID);
+
+                const formData = new URLSearchParams();
+                formData.append('ids', JSON.stringify(membersIDWithoutLoggedInUser));
+
+                const responseEmails = await fetch('get-emails.php', { method: 'POST', body: formData });
+                const emails = await responseEmails.json();
+                console.log(emails);
+
+                eventData.attendees = emails.map(email => ({ emailAddress: { address: email }, type: 'required' }));
+            } catch (error) {
+                console.log('error: ', error);
+            }
+        }
+
+        const formDataCheck = new URLSearchParams();
+        formDataCheck.append('userId', userID);
+        formDataCheck.append('eventId', event.EventID);
+
+        // Check if the event is already shared
+        const checkResponse = await fetch('check-event-shared.php', {
+            method: 'POST',
+            body: formDataCheck
+        });
+
+        const checkResult = await checkResponse.json();
+        console.log(checkResult);
+
+        if (checkResult.shared) {
+            alert('You have shared this event already');
+            return;
+        }
+
+        // Call Microsoft Graph API to create event
+        const response = await fetch('https://graph.microsoft.com/v1.0/me/events', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${sessionToken}`, // Use the stored access token
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(eventData)
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            // Check for invalid token error and prompt re-authentication
+            if (errorResponse.error && errorResponse.error.code === 'InvalidAuthenticationToken') {
+                alert('Your session has expired. Please authenticate with Microsoft again.');
+                // Redirect to Microsoft OAuth authentication
+                window.location.href = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize' +
+                    `?client_id=${client_id}` + // Replace with your client ID
+                    '&response_type=code' +
+                    '&redirect_uri=http://localhost:3000/pages/callback.php' + // Replace with your redirect URI
+                    '&scope=Calendars.ReadWrite' + // Requesting calendar permissions
+                    '&state=12345'; // Optional: Forces consent prompt every time
+                return;
+            }
+            throw new Error(`Failed to share event: ${response.status} - ${response.statusText}`);
+        }
+
+        const formDataInsert = new URLSearchParams();
+        formDataInsert.append('userIdList', JSON.stringify(membersIDs));
+        formDataInsert.append('eventId', event.EventID);
+
+        // Insert event into EventsInCalendar table
+        const responseInsert = await fetch('insert-event-in-calendar.php', {
+            method: 'POST',
+            body: formDataInsert
+        });
+
+        if (!responseInsert.ok) {
+            throw new Error(`Failed to insert membersIDs into EventsInCalendar table: ${response.status} - ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('Insert membersIDs into EventsInCalendar table:', result);
+
+        alert('Event shared successfully with Outlook calendar!');
+    } catch (error) {
+        console.error('Error sharing event:', error);
+        alert('Failed to share event. Please try again later.');
+    } finally {
+        closeShareEventOptionsModal();
+    }
+};
+
+const closeShareEventOptionsModal = () => {
+    const modal = document.getElementById('shareEventOptionsModal');
+    modal.style.display = 'none';
+};
 
 // Close modal on outside click
 window.onclick = function (event) {
