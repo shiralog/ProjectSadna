@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// If $_SESSION['ID'] is set, redirect to dashboard.php
+if (isset($_SESSION['ID'])) {
+    header("Location: /pages/dashboard.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

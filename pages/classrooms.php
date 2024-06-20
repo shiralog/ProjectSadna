@@ -1,3 +1,5 @@
+<?php include 'session_verify.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,6 +11,7 @@
 </head>
 
 <body>
+    <?php include 'navbar.php'; ?>
     <a href="dashboard.php">Back</a>
     <div class="calendar" id="calendar">
         <div class="header">

@@ -1,3 +1,5 @@
+<?php include 'session_verify.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,6 +30,7 @@
 </head>
 
 <body>
+    <?php include 'navbar.php'; ?>
     <div class="filter-bar">
         <label for="ageRange">Age Range:</label>
         <select id="ageRange">
