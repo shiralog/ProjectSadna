@@ -21,6 +21,7 @@ $groupName = $_POST['groupName'];
 $groupDescription = $_POST['groupDescription'] ?? null;
 $groupManagerID = $_SESSION['ID'];
 $numberOfStudents = 1;
+$groupPassword = $_POST['groupPassword'];
 
 // Create a new mysqli connection
 $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -53,11 +54,11 @@ function generateUniqueGroupID($conn) {
 $groupID = generateUniqueGroupID($conn);
 
 // Insert the new group into the StudyGroups table
-$sql = "INSERT INTO StudyGroups (GroupName, GroupID, GroupDescription, GroupManagerID, NumberOfStudents)
-        VALUES (?, ?, ?, ?, ?)";
+$sql = "INSERT INTO StudyGroups (GroupName, GroupID, GroupDescription, GroupPassword, GroupManagerID, NumberOfStudents)
+        VALUES (?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ssssi", $groupName, $groupID, $groupDescription, $groupManagerID, $numberOfStudents);
+$stmt->bind_param("sssssi", $groupName, $groupID, $groupDescription, $groupPassword, $groupManagerID, $numberOfStudents);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "Group created successfully."]);

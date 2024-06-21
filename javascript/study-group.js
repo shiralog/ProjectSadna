@@ -74,6 +74,7 @@ function loadStudyGroups() {
                             <p>Number of Students: ${group.NumberOfStudents}/6</p>
                             ${groupManagerText}
                             ${viewGroupMembersButton}
+                            <button class="shareFiles" data-GroupPassword="${group.GroupPassword}" data-groupID="${group.GroupID}">Share Files</button>
                             ${addPartnerButton}
                             ${removePartnerButton}
                             ${deleteGroup}
@@ -110,6 +111,20 @@ function loadStudyGroups() {
                         deleteGroup(groupID);
                     });
                 });
+
+                document.querySelectorAll('.shareFiles').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const groupID = this.getAttribute('data-groupID');
+                        const groupPassword = this.getAttribute('data-GroupPassword');
+                        const enteredPassword = prompt("Enter the group password to share files:");
+
+                        if (enteredPassword === groupPassword) {
+                            openShareFilesPopup(groupID);
+                        } else {
+                            alert('Incorrect password.');
+                        }
+                    });
+                });
             } else {
                 groupsDiv.innerHTML = '<p>No groups found.</p>';
             }
@@ -119,6 +134,119 @@ function loadStudyGroups() {
             const groupsDiv = document.getElementById('groupsContainer');
             groupsDiv.innerHTML = '<p>An error occurred while fetching the groups.</p>';
         });
+}
+
+function openShareFilesPopup(groupID) {
+    const modalContent = `
+        <div class="tabs">
+            <button class="tablinks" onclick="openTab(event, 'UploadFiles')">Upload Files</button>
+            <button class="tablinks" onclick="openTab(event, 'GetFiles')">Get Files</button>
+        </div>
+        <div id="UploadFiles" class="tabcontent" style="display: block;">
+            <h3>Upload Files</h3>
+            <form id="uploadFilesForm" enctype="multipart/form-data">
+                <input type="file" id="fileInput" name="file" multiple required><br><br>
+                <button type="submit">Upload</button>
+            </form>
+        </div>
+        <div id="GetFiles" class="tabcontent">
+            <h3>Get Files</h3>
+            <div id="filesList"></div>
+        </div>
+    `;
+
+    document.getElementById('modalContent').innerHTML = modalContent;
+    document.getElementById('modal').style.display = 'flex';
+
+    // Add event listener for the file upload form
+    document.getElementById('uploadFilesForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        formData.append('group_id', groupID);
+
+        fetch('https://anatln.mtacloud.co.il/SadnaAPI/upload.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.status === 'success') {
+                    alert('Files uploaded successfully.');
+                } else {
+                    alert('Error uploading files: ' + data.message);
+                }
+            })
+            .then(() => {
+                fetchFiles(groupID);
+            })
+            .catch(error => {
+                console.error('Error uploading files:', error);
+                alert('An error occurred while uploading files.');
+            });
+    });
+
+    fetchFiles(groupID);
+}
+
+function fetchFiles(groupID) {
+    // Fetch and display the list of files
+    fetch(`https://anatln.mtacloud.co.il/SadnaAPI/files.php?group_id=${groupID}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') {
+                if (data.message === 'Group not found.') {
+                    document.getElementById('filesList').innerHTML = `<p>There are no files here at the moment.</p>`;
+                } else {
+                    document.getElementById('filesList').innerHTML = `<p>Error occurred while fetching the files.</p>`;
+                }
+            } else {
+                const filesArray = Object.values(data.files);
+                console.log(filesArray);
+                console.log(filesArray.length);
+                if (filesArray.length === 0) {
+                    document.getElementById('filesList').innerHTML = `<p>There are no files here at the moment.</p>`;
+                }
+                console.log(filesArray);
+                const filesList = filesArray.map(file =>
+                    `<div><a href="https://anatln.mtacloud.co.il/SadnaAPI/download.php?group_id=${groupID}&file_name=${file}" download>${file}</a></div>`
+                ).join('');
+                document.getElementById('filesList').innerHTML = filesList;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching files:', error);
+            document.getElementById('filesList').innerHTML = '<p>An error occurred while fetching the files.</p>';
+        });
+}
+
+function openTab(evt, tabName) {
+    // Hide all tab content
+    const tabcontent = document.getElementsByClassName('tabcontent');
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = 'none';
+    }
+
+    // Remove the 'active' class from all tab links
+    const tablinks = document.getElementsByClassName('tablinks');
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(' active', '');
+    }
+
+    // Show the current tab, and add an 'active' class to the button that opened the tab
+    document.getElementById(tabName).style.display = 'block';
+    evt.currentTarget.className += ' active';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+window.onclick = function (event) {
+    const modal = document.getElementById('modal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
 }
 
 function deleteGroup(groupID) {

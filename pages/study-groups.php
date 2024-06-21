@@ -39,6 +39,37 @@
             color: red;
             font-size: 20px;
         }
+        /* Tab styles */
+        .tabs {
+            overflow: hidden;
+            background-color: #f1f1f1;
+            display: flex;
+        }
+
+        .tabs button {
+            background-color: inherit;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            flex-grow: 1;
+        }  
+
+        .tabs button:hover {
+            background-color: #ddd;
+        }
+
+        .tabs button.active {
+            background-color: #ccc;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border-top: none;
+        }
+
     </style>
 </head>
 <body>
@@ -52,6 +83,9 @@
 
             <label for="groupDescription">Group Description:</label>
             <textarea id="groupDescription" name="groupDescription"></textarea><br><br>
+
+            <label for="groupPassword">Group Password:</label>
+            <input type="text" id="groupPassword" name="groupPassword" required><br><br>
 
             <button type="submit">Create Group</button>
         </form>
