@@ -74,8 +74,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $emailAddress = $_POST['Email'];
     $password = $_POST['Password'];
     $phoneNumber = $_POST['PhoneNumber'];
-    $profileImagePath = isset($_POST['ProfileImagePath']) ? $_POST['ProfileImagePath'] : NULL;  // Check if ProfileImagePath is set
     $partnerType = $_POST['PartnerType'];
+    // $profileImagePath = isset($_POST['ProfileImagePath']) ? $_POST['ProfileImagePath'] : NULL;  // Check if ProfileImagePath is set
+    $profileImagePath = NULL;
+
+    // Handle file upload
+    if (isset($_FILES['ProfileImagePath']) && $_FILES['ProfileImagePath']['error'] == UPLOAD_ERR_OK) {
+        $imageDir = dirname(__DIR__) . '/images/';
+        $imageName = basename($_FILES['ProfileImagePath']['name']);
+        $imagePath = $imageDir . $imageName;
+        $imageURL = '/images/' . $imageName;
+
+        if (move_uploaded_file($_FILES['ProfileImagePath']['tmp_name'], $imagePath)) {
+            $profileImagePath = $imageURL;
+        } else {
+            $response = [
+                "register" => "Registration failed: Error uploading image",
+                "email" => "Email failed: Error uploading image"
+            ];
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit();
+        }
+    }
 
     // Create connection
     $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);

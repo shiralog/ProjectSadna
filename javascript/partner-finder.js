@@ -14,8 +14,10 @@ function fetchStudentData() {
     fetch('get-students.php')
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             loggedUserID = data['loggedInID'].toString();
             students = data['students'].filter(student => student['id'] !== loggedUserID);
+            console.log(students);
             fetchLoggedInLikes(data['likes']);
             applyFilters();
         })
@@ -129,7 +131,22 @@ function displayStudent() {
 
     const card = document.createElement('div');
     card.classList.add('card');
-    card.innerHTML = `
+    if (student.profileImagePath) {
+        card.innerHTML = `
+        <p>${currentIndex + 1}/${filteredStudents.length}</p>
+        <img src='${student.profileImagePath}'alt="Profile Image" class="profile-image"/>
+        <h3>${student.firstName + " " + student.lastName}</h3>
+        <p>Gender: ${student.gender}</p>
+        <p>Age: ${student.age}</p>
+        <p>Faculty: ${student.faculty}</p>
+        <p>Region: ${student.region}</p>
+        <p>I'm looking ${studentPartnerType}</p>
+        <p id='status'> ${student.status} </p>
+        <button onclick="previousStudent()">Previous</button>
+        <button onclick="nextStudent()">Next</button>
+    `;
+    } else {
+        card.innerHTML = `
         <p>${currentIndex + 1}/${filteredStudents.length}</p>
         <h3>${student.firstName + " " + student.lastName}</h3>
         <p>Gender: ${student.gender}</p>
@@ -137,11 +154,13 @@ function displayStudent() {
         <p>Faculty: ${student.faculty}</p>
         <p>Region: ${student.region}</p>
         <p>I'm looking ${studentPartnerType}</p>
-        <p>Profile Image Path: ${student.profileImagePath}</p>
         <p id='status'> ${student.status} </p>
         <button onclick="previousStudent()">Previous</button>
         <button onclick="nextStudent()">Next</button>
     `;
+    }
+
+    // <p>Profile Image Path: ${student.profileImagePath}</p>
 
     if (student.status == '') {
         card.innerHTML += `<button id='likeBtn' onclick="handleStatus('Like', ${student.id})">Like</button>
