@@ -1,3 +1,4 @@
 # Ignore config.php
 config.php
 CalendarAPISecrets.php
+/images
