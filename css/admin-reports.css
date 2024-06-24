@@ -1,0 +1,98 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f2f2f2;
+    padding-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Container styles */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+/* Heading styles */
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Status styles */
+#status {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Table container styles */
+#reportsTable {
+    width: 100%;
+    overflow-x: auto;
+    /* Add horizontal scroll for overflow */
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: fixed;
+    /* Ensure table takes up full width */
+}
+
+thead {
+    background-color: #4a90e2;
+    color: white;
+}
+
+th,
+td {
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+    word-wrap: break-word;
+    /* Ensure content wraps */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1050px) {
+    .container {
+        padding: 10px;
+    }
+
+    th,
+    td {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 860px) {
+
+    th,
+    td {
+        font-size: 12px;
+    }
+}

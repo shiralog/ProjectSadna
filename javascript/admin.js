@@ -52,7 +52,6 @@ function fetchReports() {
             reportsTableBody.innerHTML = ''; // Clear existing rows
             console.log(reports.length);
             if (reports.length > 0) {
-                document.getElementById('reportsTable').style.display = 'block';
                 reports.forEach(report => {
                     const row = document.createElement('tr');
                     row.innerHTML = `

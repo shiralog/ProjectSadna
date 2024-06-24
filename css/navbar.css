@@ -1,0 +1,46 @@
+/* Navbar styles */
+#main-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #007bff;
+    /* Navbar background color */
+    padding: 10px 0;
+    z-index: 1000;
+    /* Ensure it's above other content */
+}
+
+#main-navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    /* Center align the menu */
+}
+
+#main-navbar ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+#main-navbar ul li a {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+    border-radius: 6px;
+}
+
+#main-navbar ul li a:hover {
+    background-color: #0056b3;
+    /* Darker background color on hover */
+}
+
+#main-navbar ul li:last-child {
+    margin-right: 0;
+    /* Remove right margin for the last menu item */
+    float: right;
+    /* Float the last menu item (Logout) to the right */
+}

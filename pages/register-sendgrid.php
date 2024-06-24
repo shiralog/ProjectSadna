@@ -17,12 +17,12 @@ function sendWelcomeEmail($emailAddress, $fullName) {
         <head>
             <style>
                 /* Add your custom CSS styles here */
-                body { font-family: Arial, sans-serif; }
+                body { font-family: Arial, sans-serif; display:flex; justift-content:center;}
                 .container { max-width: 600px; margin: 0 auto; }
                 .header { background-color: #f0f0f0; padding: 20px; }
                 .content { padding: 20px; }
                 .footer { background-color: #f0f0f0; padding: 10px; text-align: center; }
-                img { max-width: 100%; height: auto; }
+                img { width: 300px;  }
             </style>
         </head>
         <body>
@@ -32,8 +32,9 @@ function sendWelcomeEmail($emailAddress, $fullName) {
                 </div>
                 <div class="content">
                     <p>Thank you for signing up on our website. We are excited to have you on board!</p>
-                    <p><img src="https://example.com/path-to-your-image/image.jpg" alt="Welcome Image"></p>
-                    <p>Here are some cool things you can do with our website...</p>
+                </div>
+                <div class="image">
+                    <img src="https://i.imgur.com/0ZxOsKC.png" alt="Welcome Image">
                 </div>
                 <div class="footer">
                     <p>If you have any questions, please don\'t hesitate to contact us.</p>
@@ -75,7 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['Password'];
     $phoneNumber = $_POST['PhoneNumber'];
     $partnerType = $_POST['PartnerType'];
-    // $profileImagePath = isset($_POST['ProfileImagePath']) ? $_POST['ProfileImagePath'] : NULL;  // Check if ProfileImagePath is set
     $profileImagePath = NULL;
 
     // Handle file upload

@@ -15,11 +15,12 @@ if (isset($_SESSION['ID'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find you partner</title>
+    <link rel="stylesheet" href="/css/index.css">
 </head>
 
 <body>
-    <h1>HELLO</h1>
-    <h3>Login:</h3>
+    <!-- <h1>Welcome</h1> -->
+    <img src="logo.png" alt="Logo">
     <form id="loginForm">
         <label for="email">Email: </label>
         <input type="email" name="email" required>

@@ -13,16 +13,16 @@ function openChat(partnerID, partnerFullName) {
                 </div>
             `).join('');
 
-            // Display the chat form
+            // Display the chat messages
             chatContainer.innerHTML = `
-                <div id="messages">${messagesDivContent}</div>
-                <form id="chatForm">
+                <div id="messages" class="messages">${messagesDivContent}</div>
+                <form id="chatForm" class="chatForm">
                     <input type="text" id="chatInput" placeholder="Type your message..." required>
-                    <button type="submit">Send</button>
+                    <button class='send-button' type="submit">Send</button>
                 </form>
             `;
 
-            // Scroll to the bottom of the chat
+            // Scroll to the bottom of the chat messages
             const messagesDiv = document.getElementById('messages');
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
@@ -31,6 +31,10 @@ function openChat(partnerID, partnerFullName) {
                 event.preventDefault();
                 sendMessage(partnerID, partnerFullName);
             });
+
+            // Focus on the input box when chat opens
+            const chatInput = document.getElementById('chatInput');
+            chatInput.focus();
         })
         .catch(error => {
             console.error('Error fetching messages:', error);

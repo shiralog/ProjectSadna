@@ -50,20 +50,20 @@ function loadStudyGroups() {
                     let deleteGroup = '';
 
                     if (group.NumberOfStudents > 0) {
-                        viewGroupMembersButton = `<button class="viewGroupMembers" data-groupID="${group.GroupID}">View Members</button>`;
+                        viewGroupMembersButton = `<button class="viewGroupMembers btn" data-groupID="${group.GroupID}">View Members</button>`;
                     }
 
                     if (group.GroupManagerID === userID) {
-                        deleteGroup = `<button class="deleteGroupButton" data-groupID="${group.GroupID}">Delete Group</button>`;
+                        deleteGroup = `<button class="deleteGroupButton btn" data-groupID="${group.GroupID}">Delete Group</button>`;
                     }
 
                     if (group.GroupManagerID === userID || group[`IsManager${getIsManagerColumn(group, userID)}`]) {
                         groupManagerText = `<p>You are this group's manager</p>`;
                         if (group.NumberOfStudents < 6) {
-                            addPartnerButton = `<button class="addPartnerButton" data-groupID="${group.GroupID}">Add Partner</button>`;
+                            addPartnerButton = `<button class="addPartnerButton btn" data-groupID="${group.GroupID}">Add Partner</button>`;
                         }
                         if (group.NumberOfStudents > 1) {
-                            removePartnerButton = `<button class="removePartnerButton" data-groupID="${group.GroupID}">Remove Partner</button>`;
+                            removePartnerButton = `<button class="removePartnerButton btn" data-groupID="${group.GroupID}">Remove Partner</button>`;
                         }
                     }
 
@@ -74,7 +74,7 @@ function loadStudyGroups() {
                             <p>Number of Students: ${group.NumberOfStudents}/6</p>
                             ${groupManagerText}
                             ${viewGroupMembersButton}
-                            <button class="shareFiles" data-GroupPassword="${group.GroupPassword}" data-groupID="${group.GroupID}">Share Files</button>
+                            <button class="shareFiles btn" data-GroupPassword="${group.GroupPassword}" data-groupID="${group.GroupID}">Share Files</button>
                             ${addPartnerButton}
                             ${removePartnerButton}
                             ${deleteGroup}

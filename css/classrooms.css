@@ -30,7 +30,8 @@ body {
 }
 
 .day-names div {
-    background-color: #f0f0f0;
+    background-color: #4a90e2;
+    color: white;
 }
 
 .modal {
@@ -53,6 +54,11 @@ body {
     border: 1px solid #888;
     width: 80%;
     max-width: 600px;
+}
+
+.modal-content h2 {
+    display: flex;
+    justify-content: center;
 }
 
 .close {
@@ -82,7 +88,7 @@ body {
 }
 
 .occupied {
-    background-color: #d3d3d3;
+    background-color: #afc8e6;
 }
 
 .tab {
@@ -90,6 +96,7 @@ body {
     border: 1px solid #ccc;
     background-color: #f1f1f1;
     margin-top: 10px;
+    display: flex;
 }
 
 .tab button {
@@ -100,6 +107,7 @@ body {
     cursor: pointer;
     padding: 10px 15px;
     transition: 0.3s;
+    flex: 1;
 }
 
 .tab button:hover {
@@ -115,3 +123,43 @@ body {
     padding: 20px;
     border-top: none;
 }
+
+.container {
+    margin-top: 100px;
+}
+
+#showMyEventsButton {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.btn-not-connected {
+    background-color: #627080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+/* .btn-not-connected:hover {
+    background-color: #527aa5;
+} */

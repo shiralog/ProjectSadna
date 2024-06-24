@@ -1,24 +1,147 @@
-.card {
-    width: 300px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px;
-    display: inline-block;
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f2f2f2;
+    padding-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    gap: 60px;
+}
+
+/* Filter bar styles */
 .filter-bar {
-    margin: 10px;
-    padding: 10px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    flex: 1;
+}
+
+.filter-bar label {
+    font-weight: bold;
+}
+
+.filter-bar select,
+.filter-bar button {
+    flex: 1 1 calc(33% - 20px);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.filter-bar button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.filter-bar button:hover {
+    background-color: #0056b3;
+}
+
+.partner-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.partner-button:hover {
+    background-color: #0056b3;
+}
+
+/* Card container */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    flex: 3;
+}
+
+/* Card styles */
+.card {
+    width: 100%;
+    background-color: #fff;
     border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px;
+    min-height: 530px;
+    /* transition: transform 0.3s; */
 }
 
-.filter-bar input,
-.filter-bar select {
-    margin: 5px;
+.card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    /* margin-bottom: 15px; */
 }
 
-.profile-image {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
+.card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* .card:hover {
+    transform: translateY(-5px);
+} */
+
+/* Responsive adjustments */
+@media (max-width: 1050px) {
+    .container {
+        padding: 10px;
+    }
+
+    .filter-bar select,
+    .filter-bar button {
+        flex: 1 1 calc(50% - 20px);
+    }
+}
+
+@media (max-width: 860px) {
+    .filter-bar {
+        flex-direction: column;
+    }
+
+    .filter-bar select,
+    .filter-bar button {
+        flex: 1 1 100%;
+    }
+
+    .cards-container {
+        flex-direction: column;
+        align-items: center;
+    }
 }

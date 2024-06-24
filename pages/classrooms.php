@@ -7,31 +7,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classrooms</title>
+    <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/classrooms.css">
 </head>
 
 <body>
     <?php include 'navbar.php'; ?>
-    <a href="dashboard.php">Back</a>
-    <button onclick="showMyEvents()">My Events</button>
-    <div class="calendar" id="calendar">
-        <div class="header">
-            <button onclick="changeMonth(-1)">Previous</button>
-            <h2 id="monthYear"></h2>
-            <button onclick="changeMonth(1)">Next</button>
+
+    <div class="container">
+        <div id="showMyEventsButton">
+            <button class="btn" onclick="showMyEvents()">My Events</button>
         </div>
-        <div class="day-names">
-            <div>Sun</div>
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
+        <div class="calendar" id="calendar">
+            <div class="header">
+                <button class="btn" onclick="changeMonth(-1)">Previous</button>
+                <h2 id="monthYear"></h2>
+                <button class="btn" onclick="changeMonth(1)">Next</button>
+            </div>
+            <div class="day-names">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
         </div>
     </div>
-
-
 
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -70,7 +73,7 @@
                 <option value="5">5</option>
                 <option value="6">6</option>
             </select><br><br>
-            <button onclick="setEvent()">Set</button>
+            <button class="btn" onclick="setEvent()">Set</button>
         </div>
     </div>
 
@@ -78,19 +81,10 @@
         <div class="modal-content">
             <span class="close" onclick="closeShareEventOptionsModal()">&times;</span>
             <h2>Share Event</h2>
-            <button id="shareForMyselfBtn">For myself</button>
-            <button id="shareForGroupBtn">Myself and all group members</button>
+            <button class="btn" id="shareForMyselfBtn">For myself</button>
+            <button class="btn" id="shareForGroupBtn">Myself and all group members</button>
         </div>
     </div>
-
-    <!-- <div id="myEventsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeMyEventsModal()">&times;</span>
-            <button id="connectToOutlookBtn">Connect to Outlook</button>
-            <h2>My Events</h2>
-            <ul id="myEventsList" class="classroom-list"></ul>
-        </div>
-    </div> -->
 
     <div id="userEventsModal" class="modal" style="display: none;">
         <div class="modal-content">
@@ -101,36 +95,6 @@
         </div>
     </div>
 
-
-    <!-- <script>
-        let isConnectedToOutlook = false;
-        let sessionToken = '';
-        document.addEventListener('DOMContentLoaded', () => {
-            const isConnectedToOutlook = <?php echo isset($_SESSION['access_token']) ? 'true' : 'false'; ?>;
-            if(isConnectedToOutlook){
-                sessionToken = <?php echo isset($_SESSION['access_token']) ?>;
-            }
-            // const connectBtn = document.getElementById('connect-outlook-btn');
-
-            // if (isConnectedToOutlook) {
-            //     connectBtn.textContent = 'Connected to Outlook ✔️';
-            //     connectBtn.disabled = true;
-            //     const shareEventButtons = document.querySelectorAll('.share-event');
-            //     shareEventButtons.forEach(button => {
-            //         button.disabled = false;
-            //         button.style.cursor = 'pointer';
-            //         button.textContent = 'Share event';
-            //     });
-            // } else {
-            //     connectBtn.textContent = 'Connect to Outlook';
-            //     connectBtn.disabled = false;
-            // }
-        });
-    </script>
-    <script>
-        const client_id = 
-    </script>
-    <script src="/javascript/classrooms.js"></script> -->
 
     <script>
         let isConnectedToOutlook = <?php echo isset($_SESSION['access_token']) ? 'true' : 'false'; ?>;
