@@ -57,7 +57,7 @@
                 <select id="studyGroup" name="studyGroup" required></select>
             </div>
             <div class="form-group">
-                <label id="selectMemberLabel" for="groupMember">Select Member:</label>
+                <label id="selectMemberLabel" for="groupMember">Select a Member: (You can't pick yourself)</label>
                 <select id="groupMember" name="groupMember" required></select>
             </div>
             <button id="shareButton" type="submit" class="btn">Share Task</button>
@@ -94,6 +94,10 @@
         <div id="archivedTasks" class="archived-tasks"></div>
     </div>
 
+    <script>
+        // Pass the PHP session variable to JavaScript
+        const userID = <?php echo json_encode($_SESSION['ID']); ?>;
+    </script>
     <script src="/javascript/tasks.js"></script>
 </body>
 

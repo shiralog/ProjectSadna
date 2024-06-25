@@ -8,6 +8,7 @@
     /* Navbar background color */
     padding: 10px 0;
     z-index: 1000;
+    line-height: 1.2;
     /* Ensure it's above other content */
 }
 
@@ -43,4 +44,8 @@
     /* Remove right margin for the last menu item */
     float: right;
     /* Float the last menu item (Logout) to the right */
+}
+
+#nav-logout {
+    background-color: #0050a5;
 }

@@ -85,22 +85,32 @@ async function fetchGroupMembers() {
     const response = await fetch(`get-group-members.php?groupID=${groupID}`);
     const members = await response.json();
     const groupMemberSelect = document.getElementById('groupMember');
-    groupMemberSelect.innerHTML = members.map(member => `
-        <option value="${member.ID}">${member.firstName} ${member.lastName}</option>
-    `).join('');
+    groupMemberSelect.innerHTML = members.map(member => {
+        if (member.ID === userID) {
+            return `<option value="${member.ID}" disabled>${member.firstName} ${member.lastName}</option>`;
+        } else {
+            return `<option value="${member.ID}">${member.firstName} ${member.lastName}</option>`;
+        }
+    }).join('');
 }
 
 async function shareTask(event) {
     event.preventDefault();
     const taskID = document.getElementById('shareForm').dataset.taskID;
     const memberID = document.getElementById('groupMember').value;
-    await fetch('share-task.php', {
+    const shareResponse = await fetch('share-task.php', {
         method: 'POST',
         body: JSON.stringify({ taskID, memberID }),
         headers: {
             'Content-Type': 'application/json'
         }
     });
+    const shareResult = await shareResponse.json();
+    if (shareResult['success']) {
+        alert(shareResult['message']);
+    } else {
+        alert(shareResult['message']);
+    }
     closeModal();
 }
 

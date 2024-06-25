@@ -357,10 +357,13 @@ async function fetchEvents(date) {
 
                 } else {
                     eventItem.innerHTML = `
-                Group ID: ${event.StudyGroupID}, 
-                Group Name: ${event.StudyGroupName}, 
-                Classroom: ${event.ClassroomID}, 
-                Students: ${event.NumberOfStudents}`;
+                <div class='left-side-event'>
+                    <strong>Group ID:</strong> ${event.StudyGroupID}<br>
+                    <strong>Group Name:</strong> ${event.StudyGroupName}<br>
+                    <strong>Classroom:</strong> ${event.ClassroomID}<br>
+                    <strong>Students:</strong> ${event.NumberOfStudents} 
+                </div>
+                `;
                 }
                 eventsList.appendChild(eventItem);
             });
