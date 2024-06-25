@@ -1,0 +1,160 @@
+/* Global reset and basic styles */
+body {
+    font-family: "Outfit", Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f2f2f2;
+    padding-top: 60px;
+    /* Ensure content starts below the fixed navbar */
+}
+
+.container {
+    /* display: flex;
+    justify-content: space-around;
+    padding: 20px; */
+
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    max-width: 1000px;
+    margin: auto;
+    margin-top: 80px;
+}
+
+/* Left column styles (partners list) */
+.leftColumn {
+    flex: 1;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    overflow: hidden;
+    border-right: 1px solid #ccc;
+}
+
+.leftColumn h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+h2,
+h3 {
+    color: #007bff;
+}
+
+/* Partners list container */
+#partnersContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Partner card styles */
+.partnerCard {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    justify-content: center;
+}
+
+.partnerCard:hover {
+    background-color: #0056b3;
+}
+
+.partnerCard img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.partnerCard .partnerInfo {
+    flex: 1;
+}
+
+.partnerCard p {
+    margin: 5px 0;
+    font-size: 18px;
+    color: #fff;
+}
+
+/* Right column styles (chat) */
+.rightColumn {
+    flex: 2;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    overflow: hidden;
+}
+
+#chat {
+    margin-top: 20px;
+}
+
+#chat h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#chatTitle {
+    font-weight: bold;
+}
+
+/* Messages container */
+#chatContainer {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}
+
+/* Individual message style */
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+}
+
+.message p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.timestamp {
+    font-size: 12px;
+    color: #999;
+}
+
+.send-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    flex: 1 1 calc(33% - 20px);
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: "Outfit", Arial, sans-serif;
+    font-size: 14px;
+}
+
+.send-button:hover {
+    background-color: #0056b3;
+}
+
+#chatForm input {
+    height: 30px;
+}

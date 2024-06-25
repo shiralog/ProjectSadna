@@ -9,32 +9,36 @@ async function fetchTasks() {
     const response = await fetch('get-tasks.php');
     const tasks = await response.json();
     const tasksDiv = document.getElementById('tasks');
-    tasksDiv.innerHTML = tasks.map(task => {
-        let taskDiv = `<div>
-        <h3>${task.Title}</h3>
-        <p>${task.Description}</p>`;
+    if (tasks.length === 0) {
+        tasksDiv.innerHTML = `There are no tasks at the moment.`
+    } else {
+        tasksDiv.innerHTML = tasks.map(task => {
+            let taskDiv = `<div class='task'>
+            <h3>${task.Title}</h3>
+            <p>${task.Description}</p>`;
 
-        if (task.DueDate) {
-            taskDiv += `<p>Due Date: ${task.DueDate}</p>`;
-        }
+            if (task.DueDate) {
+                taskDiv += `<p>Due Date: ${task.DueDate}</p>`;
+            }
 
-        taskDiv += `
-        <button onclick="openShareModal(${task.TaskID})">Share</button>
-        <button onclick="deleteTask(${task.TaskID})">Delete</button>`;
-
-        if (!task.IsCompleted) {
             taskDiv += `
-            <button onclick="openEditModal(${task.TaskID}, '${task.Title}', '${task.Description}', '${task.DueDate}')">Edit</button>
-            <button onclick="markTaskCompleted(${task.TaskID})">Mark as complete</button>
-            `;
-        } else {
-            taskDiv += `<p>COMPLETED</p>`;
-        }
+            <button class="btn" onclick="openShareModal(${task.TaskID})">Share</button>
+            <button class="btn" onclick="deleteTask(${task.TaskID})">Delete</button>`;
 
-        taskDiv += `</div>`;
+            if (!task.IsCompleted) {
+                taskDiv += `
+                <button class="btn" onclick="openEditModal(${task.TaskID}, '${task.Title}', '${task.Description}', '${task.DueDate}')">Edit</button>
+                <button class="btn" onclick="markTaskCompleted(${task.TaskID})">Mark as complete</button>
+                `;
+            } else {
+                taskDiv += `<p id='task-completed'>COMPLETED</p>`;
+            }
 
-        return taskDiv;
-    }).join('');
+            taskDiv += `</div>`;
+
+            return taskDiv;
+        }).join('');
+    }
 }
 
 async function createTask(event) {

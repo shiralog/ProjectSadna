@@ -50,20 +50,20 @@ function loadStudyGroups() {
                     let deleteGroup = '';
 
                     if (group.NumberOfStudents > 0) {
-                        viewGroupMembersButton = `<button class="viewGroupMembers" data-groupID="${group.GroupID}">View Members</button>`;
+                        viewGroupMembersButton = `<button class="viewGroupMembers btn" data-groupID="${group.GroupID}">View Members</button>`;
                     }
 
                     if (group.GroupManagerID === userID) {
-                        deleteGroup = `<button class="deleteGroupButton" data-groupID="${group.GroupID}">Delete Group</button>`;
+                        deleteGroup = `<button class="deleteGroupButton btn" data-groupID="${group.GroupID}">Delete Group</button>`;
                     }
 
                     if (group.GroupManagerID === userID || group[`IsManager${getIsManagerColumn(group, userID)}`]) {
                         groupManagerText = `<p>You are this group's manager</p>`;
                         if (group.NumberOfStudents < 6) {
-                            addPartnerButton = `<button class="addPartnerButton" data-groupID="${group.GroupID}">Add Partner</button>`;
+                            addPartnerButton = `<button class="addPartnerButton btn" data-groupID="${group.GroupID}">Add Partner</button>`;
                         }
                         if (group.NumberOfStudents > 1) {
-                            removePartnerButton = `<button class="removePartnerButton" data-groupID="${group.GroupID}">Remove Partner</button>`;
+                            removePartnerButton = `<button class="removePartnerButton btn" data-groupID="${group.GroupID}">Remove Partner</button>`;
                         }
                     }
 
@@ -74,7 +74,7 @@ function loadStudyGroups() {
                             <p>Number of Students: ${group.NumberOfStudents}/6</p>
                             ${groupManagerText}
                             ${viewGroupMembersButton}
-                            <button class="shareFiles" data-GroupPassword="${group.GroupPassword}" data-groupID="${group.GroupID}">Share Files</button>
+                            <button class="shareFiles btn" data-GroupPassword="${group.GroupPassword}" data-groupID="${group.GroupID}">Share Files</button>
                             ${addPartnerButton}
                             ${removePartnerButton}
                             ${deleteGroup}
@@ -87,6 +87,7 @@ function loadStudyGroups() {
                 document.querySelectorAll('.addPartnerButton').forEach(button => {
                     button.addEventListener('click', function () {
                         const groupID = this.getAttribute('data-groupID');
+                        document.getElementById('modalBackground').style.display = 'block';
                         showAddPartnerModal(groupID);
                     });
                 });
@@ -94,6 +95,7 @@ function loadStudyGroups() {
                 document.querySelectorAll('.removePartnerButton').forEach(button => {
                     button.addEventListener('click', function () {
                         const groupID = this.getAttribute('data-groupID');
+                        document.getElementById('modalBackground').style.display = 'block';
                         showRemovePartnerModal(groupID);
                     });
                 });
@@ -101,6 +103,7 @@ function loadStudyGroups() {
                 document.querySelectorAll('.viewGroupMembers').forEach(button => {
                     button.addEventListener('click', function () {
                         const groupID = this.getAttribute('data-groupID');
+                        document.getElementById('modalBackground').style.display = 'block';
                         viewGroupMembers(groupID);
                     });
                 });
@@ -117,11 +120,12 @@ function loadStudyGroups() {
                         const groupID = this.getAttribute('data-groupID');
                         const groupPassword = this.getAttribute('data-GroupPassword');
                         const enteredPassword = prompt("Enter the group password to share files:");
-
+                        document.getElementById('modalBackground').style.display = 'block';
                         if (enteredPassword === groupPassword) {
                             openShareFilesPopup(groupID);
                         } else {
                             alert('Incorrect password.');
+                            document.getElementById('modalBackground').style.display = 'none';
                         }
                     });
                 });
@@ -146,10 +150,10 @@ function openShareFilesPopup(groupID) {
             <h3>Upload Files</h3>
             <form id="uploadFilesForm" enctype="multipart/form-data">
                 <input type="file" id="fileInput" name="file" multiple required><br><br>
-                <button type="submit">Upload</button>
+                <button class='btn' type="submit">Upload</button>
             </form>
         </div>
-        <div id="GetFiles" class="tabcontent">
+        <div id="GetFiles" class="tabcontent" style="display:none;">
             <h3>Get Files</h3>
             <div id="filesList"></div>
         </div>
@@ -240,12 +244,14 @@ function openTab(evt, tabName) {
 
 function closeModal() {
     document.getElementById('modal').style.display = 'none';
+    document.getElementById('modalBackground').style.display = 'none';
 }
 
 window.onclick = function (event) {
     const modal = document.getElementById('modal');
     if (event.target == modal) {
         modal.style.display = 'none';
+        document.getElementById('modalBackground').style.display = 'none';
     }
 }
 
@@ -309,7 +315,7 @@ function showAddPartnerModal(groupID) {  // Changed line
                         let modalContent = '<h2>Select a partner to add:</h2>';
                         modalContent += '<div class="partner-list">';
                         nonGroupMembers.forEach(partner => {
-                            modalContent += `<div>${partner.firstName} ${partner.lastName} <button onclick="addPartner(${groupID}, ${partner.ID})">Add</button></div>`;
+                            modalContent += `<div>${partner.firstName} ${partner.lastName} <button class='btn' style='margin-left:20px;' onclick="addPartner(${groupID}, ${partner.ID})">Add</button></div>`;
                         });
                         modalContent += '</div>';
                         document.getElementById('modalContent').innerHTML = modalContent;
@@ -339,7 +345,7 @@ function showRemovePartnerModal(groupID) {  // Changed line
                 if (member.ID === groupCreatorID)
                     modalContent += `<div>${member.firstName} ${member.lastName} ( Group creator can't be removed )</div>`;
                 else
-                    modalContent += `<div>${member.firstName} ${member.lastName} <button onclick="removePartner(${groupID}, ${member.ID})">Remove</button></div>`;
+                    modalContent += `<div>${member.firstName} ${member.lastName} <button class='btn' style='margin-left:20px;' onclick="removePartner(${groupID}, ${member.ID})">Remove</button></div>`;
             });
             modalContent += '</div>';
             document.getElementById('modalContent').innerHTML = modalContent;
@@ -407,7 +413,7 @@ function viewGroupMembers(groupID) {
                 modalContent += `<div>${member.firstName} ${member.lastName}`;
                 // Check if member is already a manager
                 if (isLoggedInManager && !member.isManager) {
-                    modalContent += ` <button onclick="makeManager(${groupID}, ${member.ID})">Make Manager</button>`;
+                    modalContent += ` <button class='btn' style='margin-left:20px;' onclick="makeManager(${groupID}, ${member.ID})">Make Manager</button>`;
                 }
 
                 modalContent += `</div>`;
@@ -446,13 +452,14 @@ function makeManager(groupID, memberID) {
         });
 }
 
-function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-}
+// function closeModal() {
+//     document.getElementById('modal').style.display = 'none';
+// }
 
-window.onclick = function (event) {
-    const modal = document.getElementById('modal');
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
-}
+// window.onclick = function (event) {
+//     const modal = document.getElementById('modal');
+//     if (event.target == modal) {
+//         // modal.style.display = 'none';
+//         // document.getElementById('modalBackground').style.display = 'none';
+//     }
+// }

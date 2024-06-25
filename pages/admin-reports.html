@@ -5,26 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin-reports.css">
     <script src="/javascript/admin.js" defer></script>
 </head>
 
 <body style="display: none;">
-    <h1>Admin Reports</h1>
-    <div id="status"></div>
-    <table id="reportsTable">
-        <thead>
-            <tr>
-                <th>Issue Topic</th>
-                <th>Issue Content</th>
-                <th>Ticket ID</th>
-                <th>Date Of Submission</th>
-                <th>Response</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be dynamically inserted here -->
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>Admin Reports</h1>
+        <div id="status"></div>
+        <table id="reportsTable">
+            <thead>
+                <tr>
+                    <th>Issue Topic</th>
+                    <th>Issue Content</th>
+                    <th>Ticket ID</th>
+                    <th>Date Of Submission</th>
+                    <th>Response</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
 </body>
 
 </html>

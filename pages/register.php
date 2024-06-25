@@ -1,5 +1,7 @@
 <?php
 
+// THIS FILE IS THE OLD VERSION OF "register-sendgrid.php" - THIS FILE IS NOT CONNECTED TO THE PROJECT RIGHT NOW.
+
 require_once 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

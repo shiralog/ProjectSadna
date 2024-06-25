@@ -14,23 +14,55 @@ if (!isset($_SESSION['firstName'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
     <?php include 'navbar.php'; ?>
-    
-    <h1>Welcome, <?php echo htmlspecialchars($_SESSION['firstName']); ?>!</h1>
-    <p>This is your dashboard.</p>
+    <div class="container">
+        <h1>Welcome, <?php echo htmlspecialchars($_SESSION['firstName']); ?>!</h1>
 
-
-    <a href="partner-finder.php">Find partners!</a>
-    <a href="chats.php">Chat with your partners</a>
-    <a href="study-groups.php">Study Groups</a>
-    <a href="classrooms.php">Classrooms</a>
-    <a href="tasks.php">Tasks</a>
-    <a href="reports.php">Report an issue</a>
-
-    <form action="logout.php" method="post">
-        <button type="submit">Logout</button>
-    </form>
+        <div class="card-container">
+            <a class="card" href="partner-finder.php">
+                <div class="card-content">
+                    <h2>Find partners!</h2>
+                    <img class="icon" src="/assets/user-add.png" alt="Find partners icon" style="margin-top: 28px;">
+                </div>
+            </a>
+            <a class="card" href="chats.php">
+                <div class="card-content">
+                    <h2>Chat with your partners</h2>
+                    <img class="icon" src="/assets/computer.png" alt="Chat with your partners icon">
+                </div>
+            </a>
+            <a class="card" href="study-groups.php">
+                <div class="card-content">
+                    <h2>Study Groups</h2>
+                    <img class="icon" src="/assets/users-alt.png" alt="Study Groups icon">
+                </div>
+            </a>
+            <a class="card" href="classrooms.php">
+                <div class="card-content">
+                    <h2>Classrooms</h2>
+                    <img class="icon" src="/assets/desk.png" alt="Classrooms icon">
+                </div>
+            </a>
+            <a class="card" href="tasks.php">
+                <div class="card-content">
+                    <h2>Tasks</h2>
+                    <img class="icon" src="/assets/file-spreadsheet.png" alt="Tasks icon">
+                </div>
+            </a>
+            <a class="card" href="reports.php">
+                <div class="card-content">
+                    <h2>Report an issue</h2>
+                    <img class="icon" src="/assets/comment-exclamation.png" alt="Report an issue icon">
+                </div>
+            </a>
+        </div>
+    </div>
 </body>
 </html>

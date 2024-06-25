@@ -158,6 +158,7 @@ function showModal(month, day, year) {
         // Filter out occupied classrooms
         const availableClassrooms = classrooms.filter(classroomElement => !occupiedClassrooms.includes(classroomElement.classroom));
         console.log(availableClassrooms);
+
         availableClassrooms.forEach(classroom => {
             const listItem = document.createElement('li');
             listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
@@ -342,12 +343,18 @@ async function fetchEvents(date) {
 
                 if (dataGroups[event.StudyGroupID]) {
                     eventItem.innerHTML = `
-                Group ID: ${event.StudyGroupID}, 
-                Group Name: ${event.StudyGroupName}, 
-                Classroom: ${event.ClassroomID}, 
-                Students: ${event.NumberOfStudents} 
-                <button onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
-                <button onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>`;
+                <div class='left-side-event'>
+                    <strong>Group ID:</strong> ${event.StudyGroupID}<br>
+                    <strong>Group Name:</strong> ${event.StudyGroupName}<br>
+                    <strong>Classroom:</strong> ${event.ClassroomID}<br>
+                    <strong>Students:</strong> ${event.NumberOfStudents} 
+                </div>
+                <div class='right-side-event'>
+                    <button class="btn-events" onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
+                    <button class="btn-events" onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>
+                </div>
+                `;
+
                 } else {
                     eventItem.innerHTML = `
                 Group ID: ${event.StudyGroupID}, 
@@ -505,8 +512,6 @@ function displayUserEvents(events, isConnectedToOutlook) {
     closeBtn.classList.add('close');
     closeBtn.onclick = () => {
         userEventsModal.style.display = 'none';
-        // Optionally, remove modal from DOM
-        // userEventsModal.remove();
     };
     closeBtn.textContent = '×';
     modalContent.appendChild(closeBtn);
@@ -523,6 +528,8 @@ function displayUserEvents(events, isConnectedToOutlook) {
     // Connect to Outlook button
     const connectToOutlookBtn = document.createElement('button');
     connectToOutlookBtn.id = 'connect-outlook-btn';
+    connectToOutlookBtn.style = 'margin-top: 10px;'
+    connectToOutlookBtn.classList.add('btn');
     connectToOutlookBtn.textContent = isConnectedToOutlook ? 'Connected' : 'Connect to Outlook';
     if (!isConnectedToOutlook) {
         connectToOutlookBtn.onclick = () => {
@@ -561,13 +568,15 @@ function displayUserEvents(events, isConnectedToOutlook) {
             <p><strong>Number of Students:</strong> ${event.NumberOfStudents}</p>
             <p id='selectedDateMyEvents'><strong>Date:</strong> ${event.Date}</p>
             <p><strong>Hours:</strong> ${event.Hours}</p>
-            <button onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
-            <button onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>
+            <button class="btn" onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
+            <button class="btn" onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>
         `;
 
             // Share event button (enabled if connected to Outlook)
             const shareEventBtn = document.createElement('button');
             shareEventBtn.classList.add('share-event');
+            if (isConnectedToOutlook) shareEventBtn.classList.add('btn');
+            else shareEventBtn.classList.add('btn-not-connected');
             shareEventBtn.textContent = isConnectedToOutlook ? 'Share event' : 'Outlook not connected';
             shareEventBtn.disabled = !isConnectedToOutlook;
             shareEventBtn.style.cursor = isConnectedToOutlook ? 'pointer' : 'not-allowed';

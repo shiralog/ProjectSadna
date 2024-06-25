@@ -141,30 +141,31 @@ function displayStudent() {
         <p>Faculty: ${student.faculty}</p>
         <p>Region: ${student.region}</p>
         <p>I'm looking ${studentPartnerType}</p>
-        <p id='status'> ${student.status} </p>
-        <button onclick="previousStudent()">Previous</button>
-        <button onclick="nextStudent()">Next</button>
+        <p id='status' style='height: 25.6px;'> ${student.status} </p>
+        <button class='partner-button' onclick="previousStudent()">Previous</button>
+        <button class='partner-button'onclick="nextStudent()">Next</button>
     `;
     } else {
         card.innerHTML = `
         <p>${currentIndex + 1}/${filteredStudents.length}</p>
+        <div style='width:100px; height:100px; display:flex; margin: 0 auto; justify-content: center; align-items:center;'> No Photo</div>
         <h3>${student.firstName + " " + student.lastName}</h3>
         <p>Gender: ${student.gender}</p>
         <p>Age: ${student.age}</p>
         <p>Faculty: ${student.faculty}</p>
         <p>Region: ${student.region}</p>
         <p>I'm looking ${studentPartnerType}</p>
-        <p id='status'> ${student.status} </p>
-        <button onclick="previousStudent()">Previous</button>
-        <button onclick="nextStudent()">Next</button>
+        <p id='status' style='height: 25.6px;'> ${student.status} </p>
+        <button class='partner-button'onclick="previousStudent()">Previous</button>
+        <button class='partner-button'onclick="nextStudent()">Next</button>
     `;
     }
 
     // <p>Profile Image Path: ${student.profileImagePath}</p>
 
     if (student.status == '') {
-        card.innerHTML += `<button id='likeBtn' onclick="handleStatus('Like', ${student.id})">Like</button>
-        <button id='dislikeBtn' onclick="handleStatus('Dislike', ${student.id})">Dislike</button>`;
+        card.innerHTML += `<button class='partner-button' id='likeBtn' onclick="handleStatus('Like', ${student.id})">Like</button>
+        <button class='partner-button' id='dislikeBtn' onclick="handleStatus('Dislike', ${student.id})">Dislike</button>`;
     }
 
     studentContainer.appendChild(card);

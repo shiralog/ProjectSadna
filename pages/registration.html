@@ -5,74 +5,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
-    <style>
-        .error-message {
-            color: red;
-            font-weight: bold;
-        }
-
-        .success-message {
-            color: green;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/registration.css">
 </head>
 
 <body>
     <form id="registerForm" enctype="multipart/form-data">
-        <label for="FirstName">First Name: </label>
-        <input type="text" id="firstName" name="FirstName" required placeholder="Enter your first name">
-        <label for="LastName">Last Name: </label>
-        <input type="text" id="lastName" name="LastName" required placeholder="Enter your last name">
-        <label for="Age">Age: </label>
-        <input type="number" id="age" name="Age" required placeholder="Enter your age">
-        <label for="ID">ID: </label>
-        <input type="number" id="ID" name="ID" required placeholder="Enter your ID">
-        <label for="Region">Region: </label>
-        <select id="region" name="Region" required>
-            <option value="" disabled selected>Select your region</option>
-            <option value="South">South</option>
-            <option value="Center">Center</option>
-            <option value="North">North</option>
-        </select>
-        <label for="Faculty">Faculty: </label>
-        <select id="faculty" name="Faculty" required>
-            <option value="" disabled selected>Select your faculty</option>
-            <option value="Art">Art</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Law">Law</option>
-            <option value="Business">Business</option>
-            <option value="Education">Education</option>
-            <option value="Social_Sciences">Social Sciences</option>
-            <option value="computer_Science">Computer Science</option>
-            <option value="Nursing">Nursing</option>
-            <option value="Pharmacy">Pharmacy</option>
-            <option value="Veterinary">Veterinary</option>
-            <option value="Environmental_Studies">Environmental Studies</option>
-            <option value="Sports_Science">Sports Science</option>
-        </select>
-        <div class="form-radio">
-            <label>Gender: </label>
-            <input type="radio" id="male" name="Gender" value="Male">
-            <label for="Male">Male</label>
-            <input type="radio" id="female" name="Gender" value="Female">
-            <label for="Female">Female</label>
+        <div class="form-left">
+            <label for="FirstName">First Name: </label>
+            <input type="text" id="firstName" name="FirstName" required placeholder="Enter your first name">
+            <label for="LastName">Last Name: </label>
+            <input type="text" id="lastName" name="LastName" required placeholder="Enter your last name">
+            <label for="Age">Age: </label>
+            <input type="number" id="age" name="Age" required placeholder="Enter your age">
+            <label for="ID">ID: </label>
+            <input type="number" id="ID" name="ID" required placeholder="Enter your ID">
+            <label for="Region">Region: </label>
+            <select id="region" name="Region" required>
+                <option value="" disabled selected>Select your region</option>
+                <option value="South">South</option>
+                <option value="Center">Center</option>
+                <option value="North">North</option>
+            </select>
+            <label for="Faculty">Faculty: </label>
+            <select id="faculty" name="Faculty" required>
+                <option value="" disabled selected>Select your faculty</option>
+                <option value="Art">Art</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Law">Law</option>
+                <option value="Business">Business</option>
+                <option value="Education">Education</option>
+                <option value="Social_Sciences">Social Sciences</option>
+                <option value="computer_Science">Computer Science</option>
+                <option value="Nursing">Nursing</option>
+                <option value="Pharmacy">Pharmacy</option>
+                <option value="Veterinary">Veterinary</option>
+                <option value="Environmental_Studies">Environmental Studies</option>
+                <option value="Sports_Science">Sports Science</option>
+            </select>
+            <div class="form-radio">
+                <label>Gender: </label><br>
+                <input style="margin-top: 10px; margin-right: 5px;" type="radio" id="male" name="Gender" value="Male"
+                    required>
+                <label style="margin-right: 10px;" for="Male">Male</label>
+                <input style="margin-top: 10px; margin-right: 5px;" type="radio" id="female" name="Gender"
+                    value="Female" required>
+                <label for="Female">Female</label>
+            </div>
         </div>
-        <label for="Email">Email Address: </label>
-        <input type="email" id="email" name="Email" required placeholder="Enter your email address">
-        <label for="Password">Password: </label>
-        <input type="password" id="password" name="Password" required placeholder="Enter your password">
-        <label for="PhoneNumber">Phone Number: </label>
-        <input type="tel" id="phoneNumber" name="PhoneNumber" placeholder="Enter your phone number">
-        <label for="ProfileImagePath">Upload Your Profile Image: </label>
-        <input type="file" id="image" name="ProfileImagePath" accept="image/*">
-        <label for="PartnerType">What are you looking to do with your partners? </label>
-        <select id="partnerType" name="PartnerType" required>
-            <option value="" disabled selected>Select a partner type</option>
-            <option value="Silent_Study">Silent study</option>
-            <option value="Study_Tests">Study for tests</option>
-            <option value="Submit_Chores">Submit chores</option>
-        </select>
+
+        <div class="form-right">
+            <label for="Email">Email Address: </label>
+            <input type="email" id="email" name="Email" required placeholder="Enter your email address">
+            <label for="Password">Password: </label>
+            <input type="password" id="password" name="Password" required placeholder="Enter your password">
+            <label for="PhoneNumber">Phone Number: </label>
+            <input type="tel" id="phoneNumber" name="PhoneNumber" required placeholder="Enter your phone number">
+            <label for="ProfileImagePath">Upload Your Profile Image: </label>
+            <input type="file" id="image" name="ProfileImagePath" accept="image/*">
+            <label for="PartnerType">What are you looking to do with your partners? </label>
+            <select id="partnerType" name="PartnerType" required>
+                <option value="" disabled selected>Select a partner type</option>
+                <option value="Silent_Study">Silent study</option>
+                <option value="Study_Tests">Study for tests</option>
+                <option value="Submit_Chores">Submit chores</option>
+            </select>
+        </div>
         <button type="submit">Register</button>
     </form>
     <p id="message"></p>
