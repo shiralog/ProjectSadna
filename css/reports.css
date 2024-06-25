@@ -1,6 +1,6 @@
 /* General styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Outfit", Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f0f0f0;
@@ -68,6 +68,7 @@ textarea {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    font-family: "Outfit", Arial, sans-serif;
     border-radius: 5px;
     margin-top: 10px;
     transition: background-color 0.3s;

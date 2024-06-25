@@ -1,6 +1,6 @@
 /* Global styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Outfit", Arial, sans-serif;
     line-height: 1.6;
     background-color: #f2f2f2;
     padding-top: 60px;
@@ -71,6 +71,26 @@ td {
     font-size: 14px;
     word-wrap: break-word;
     /* Ensure content wraps */
+}
+
+td input {
+    font-family: "Outfit", Arial, sans-serif;
+}
+
+td button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    font-family: "Outfit", Arial, sans-serif;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+td button:hover {
+    background-color: #0056b3;
 }
 
 tbody tr:nth-child(even) {

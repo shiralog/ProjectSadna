@@ -7,6 +7,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classrooms</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/classrooms.css">
 </head>
@@ -46,6 +49,7 @@
             </div>
             <div id="setEventTab" class="tabcontent">
                 <div id="classroomContainer">
+                    <h4>Please choose a classroom from the list:</h4>
                     <ul id="classroomList" class="classroom-list"></ul>
                 </div>
             </div>
@@ -59,12 +63,12 @@
         <div class="modal-content">
             <span class="close" onclick="closeSetEventModal()">&times;</span>
             <h2>Set Event Details</h2>
-            <p>Selected Date: <span id="selectedEventDate"></span></p>
-            <p>Hours: <span id="selectedClassroomHours"></span></p>
-            <p>Selected Classroom: <span id="selectedClassroom"></span></p>
-            <label for="groupName">Study Group Name:</label>
+            <p><strong>Selected Date:</strong> <span id="selectedEventDate"></span></p>
+            <p><strong>Hours:</strong> <span id="selectedClassroomHours"></span></p>
+            <p><strong>Selected Classroom:</strong> <span id="selectedClassroom"></span></p>
+            <label for="groupName"><strong>Study Group Name:</strong></label>
             <select id="groupNameSelect"></select><br><br>
-            <label for="groupSize">Number of People:</label>
+            <label for="groupSize"><strong>Number of People:</strong></label>
             <select id="groupSize">
                 <option value="1">1</option>
                 <option value="2">2</option>

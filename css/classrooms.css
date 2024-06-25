@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Outfit", Arial, sans-serif;
 }
 
 .calendar {
@@ -49,11 +49,19 @@ body {
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto;
+    margin: 2% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
     max-width: 600px;
+}
+
+#groupNameSelect {
+    font-family: "Outfit", Arial, sans-serif;
+}
+
+#groupSize {
+    font-family: "Outfit", Arial, sans-serif;
 }
 
 .modal-content h2 {
@@ -85,6 +93,23 @@ body {
     justify-content: space-between;
     margin-bottom: 10px;
     cursor: pointer;
+    font-size: 18px;
+}
+
+#eventsList li {
+    margin-bottom: 30px;
+}
+
+.left-side-event {
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+.right-side-event {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
 }
 
 .occupied {
@@ -103,6 +128,7 @@ body {
     background-color: inherit;
     float: left;
     border: none;
+    font-family: "Outfit", Arial, sans-serif;
     outline: none;
     cursor: pointer;
     padding: 10px 15px;
@@ -138,6 +164,7 @@ body {
     background-color: #007bff;
     color: #fff;
     border: none;
+    font-family: "Outfit", Arial, sans-serif;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
@@ -153,6 +180,7 @@ body {
     background-color: #627080;
     color: #fff;
     border: none;
+    font-family: "Outfit", Arial, sans-serif;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
@@ -160,6 +188,17 @@ body {
     transition: background-color 0.3s;
 }
 
-/* .btn-not-connected:hover {
-    background-color: #527aa5;
-} */
+.btn-events {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-family: "Outfit", Arial, sans-serif;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-events:hover {
+    background-color: #0056b3;
+}

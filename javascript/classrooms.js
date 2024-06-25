@@ -158,6 +158,7 @@ function showModal(month, day, year) {
         // Filter out occupied classrooms
         const availableClassrooms = classrooms.filter(classroomElement => !occupiedClassrooms.includes(classroomElement.classroom));
         console.log(availableClassrooms);
+
         availableClassrooms.forEach(classroom => {
             const listItem = document.createElement('li');
             listItem.textContent = `${classroom.classroom} (${classroom.working_hours})`;
@@ -342,12 +343,18 @@ async function fetchEvents(date) {
 
                 if (dataGroups[event.StudyGroupID]) {
                     eventItem.innerHTML = `
-                Group ID: ${event.StudyGroupID}, 
-                Group Name: ${event.StudyGroupName}, 
-                Classroom: ${event.ClassroomID}, 
-                Students: ${event.NumberOfStudents} 
-                <button class="btn" onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
-                <button class="btn" onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>`;
+                <div class='left-side-event'>
+                    <strong>Group ID:</strong> ${event.StudyGroupID}<br>
+                    <strong>Group Name:</strong> ${event.StudyGroupName}<br>
+                    <strong>Classroom:</strong> ${event.ClassroomID}<br>
+                    <strong>Students:</strong> ${event.NumberOfStudents} 
+                </div>
+                <div class='right-side-event'>
+                    <button class="btn-events" onClick="changeNumOfStudents(${event.EventID})">Edit number of students</button> 
+                    <button class="btn-events" onClick="removeEvent(${event.EventID},${event.ClassroomID})">Delete</button>
+                </div>
+                `;
+
                 } else {
                     eventItem.innerHTML = `
                 Group ID: ${event.StudyGroupID}, 

@@ -1,6 +1,6 @@
 /* General styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Outfit", Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f0f0f0;
@@ -82,6 +82,7 @@ textarea {
     background-color: #007bff;
     color: #fff;
     border: none;
+    font-family: "Outfit", Arial, sans-serif;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
@@ -93,7 +94,6 @@ textarea {
     background-color: #0056b3;
 }
 
-/* Modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -102,13 +102,68 @@ textarea {
     top: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    padding: 20px;
+    padding: 30px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    width: 300px;
+    width: 450px;
     max-width: 100%;
     overflow-y: auto;
     max-height: 80vh;
+}
+
+input[type='file']::file-selector-button {
+    background-color: #007bff;
+    font-family: "Outfit", Arial, sans-serif;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.tabs {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    margin-top: 10px;
+    display: flex;
+}
+
+.tabs button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    font-family: "Outfit", Arial, sans-serif;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 15px;
+    transition: 0.3s;
+    flex: 1;
+}
+
+.tabs button:hover {
+    background-color: #ddd;
+}
+
+.tabs button.active {
+    background-color: #ccc;
+}
+
+.modal-content {
+    width: 100%;
+}
+
+#modalBackground {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .close-btn {

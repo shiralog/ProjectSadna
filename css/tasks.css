@@ -1,6 +1,6 @@
 /* General styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Outfit", Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f0f0f0;
@@ -38,6 +38,10 @@ body {
     margin-bottom: 20px;
 }
 
+#shareForm select {
+    font-family: "Outfit", Arial, sans-serif;
+}
+
 /* Form styles */
 form {
     margin-bottom: 20px;
@@ -53,6 +57,7 @@ input[type="date"],
 textarea {
     width: 100%;
     padding: 10px;
+    font-family: "Outfit", Arial, sans-serif;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -161,6 +166,7 @@ textarea {
     color: #fff;
     border: none;
     padding: 10px 20px;
+    font-family: "Outfit", Arial, sans-serif;
     cursor: pointer;
     border-radius: 5px;
     margin-top: 10px;
@@ -174,6 +180,7 @@ textarea {
 #task-completed {
     text-align: center;
     color: green;
+    font-family: "Outfit", Arial, sans-serif;
     font-weight: 600;
 }
 

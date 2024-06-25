@@ -1,6 +1,6 @@
 /* Global styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Outfit", Arial, sans-serif;
     line-height: 1.6;
     background-color: #f2f2f2;
     padding-top: 60px;
@@ -35,14 +35,17 @@ body {
     flex: 1;
 }
 
+
 .filter-bar label {
     font-weight: bold;
+    font-family: "Outfit", Arial, sans-serif;
 }
 
 .filter-bar select,
 .filter-bar button {
     flex: 1 1 calc(33% - 20px);
     margin-bottom: 10px;
+    font-family: "Outfit", Arial, sans-serif;
     font-size: 14px;
 }
 
@@ -53,6 +56,7 @@ body {
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
+    font-family: "Outfit", Arial, sans-serif;
     transition: background-color 0.3s;
 }
 
@@ -64,6 +68,7 @@ body {
     background-color: #007bff;
     color: #fff;
     border: none;
+    font-family: "Outfit", Arial, sans-serif;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;

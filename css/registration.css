@@ -1,6 +1,6 @@
 /* General styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Outfit", Arial, sans-serif;
     background-color: #f4f4f9;
     margin: 0;
     padding: 0;
@@ -59,6 +59,7 @@ select {
     width: calc(100% - 20px);
     padding: 10px;
     margin-top: 5px;
+    font-family: "Outfit", Arial, sans-serif;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -77,6 +78,7 @@ button {
     padding: 10px 20px;
     background-color: #007bff;
     border: none;
+    font-family: "Outfit", Arial, sans-serif;
     border-radius: 5px;
     color: white;
     font-size: 1.5em;
@@ -99,6 +101,17 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+input[type='file']::file-selector-button {
+    background-color: #007bff;
+    font-family: "Outfit", Arial, sans-serif;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 .error-message {

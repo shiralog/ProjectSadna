@@ -71,11 +71,13 @@ function sendReplyNotificationEmail($emailAddress, $ticketID, $responseMessage) 
         <html>
         <head>
             <style>
-                body { font-family: Arial, sans-serif; }
-                .container { max-width: 600px; margin: 0 auto; }
+                body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #000; }
+                .container { max-width: 600px; margin: 0 auto; text-align: center;}
                 .header { background-color: #f0f0f0; padding: 20px; }
                 .content { padding: 20px; }
                 .footer { background-color: #f0f0f0; padding: 10px; text-align: center; }
+                .image-container { text-align: center; padding: 20px; }
+                img { width: 300px; }
             </style>
         </head>
         <body>
@@ -87,6 +89,9 @@ function sendReplyNotificationEmail($emailAddress, $ticketID, $responseMessage) 
                     <p>Dear user,</p>
                     <p>Your ticket with the ID <strong>' . htmlspecialchars($ticketID) . '</strong> has been replied with the following response:</p>
                     <p><em>"' . htmlspecialchars($responseMessage) . '"</em></p>
+                <div class="image-container">
+                    <img src="https://i.imgur.com/0ZxOsKC.png" alt="Thanks Image">
+                </div>
                     <p>If you have any further questions, please do not hesitate to contact us.</p>
                 </div>
                 <div class="footer">

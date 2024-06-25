@@ -17,12 +17,13 @@ function sendWelcomeEmail($emailAddress, $fullName) {
         <head>
             <style>
                 /* Add your custom CSS styles here */
-                body { font-family: Arial, sans-serif; display:flex; justift-content:center;}
-                .container { max-width: 600px; margin: 0 auto; }
+                body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #000; }
+                .container { max-width: 600px; margin: 0 auto; text-align: center; }
                 .header { background-color: #f0f0f0; padding: 20px; }
                 .content { padding: 20px; }
                 .footer { background-color: #f0f0f0; padding: 10px; text-align: center; }
-                img { width: 300px;  }
+                .image-container { text-align: center; padding: 20px; }
+                img { width: 300px; }
             </style>
         </head>
         <body>
@@ -33,7 +34,7 @@ function sendWelcomeEmail($emailAddress, $fullName) {
                 <div class="content">
                     <p>Thank you for signing up on our website. We are excited to have you on board!</p>
                 </div>
-                <div class="image">
+                <div class="image-container">
                     <img src="https://i.imgur.com/0ZxOsKC.png" alt="Welcome Image">
                 </div>
                 <div class="footer">
