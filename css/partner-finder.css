@@ -144,9 +144,25 @@ body {
     .filter-bar button {
         flex: 1 1 100%;
     }
+}
 
-    .cards-container {
-        flex-direction: column;
-        align-items: center;
+/* Responsive adjustments */
+@media (max-width: 1180px) {
+    .container {
+        margin-top: 80px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 650px) {
+    .container {
+        margin-top: 100px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 490px) {
+    .container {
+        margin-top: 140px;
     }
 }

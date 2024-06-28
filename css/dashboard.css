@@ -79,3 +79,24 @@ button:hover {
     width: 100px;
 
 }
+
+/* Responsive adjustments */
+@media (max-width: 1180px) {
+    .container {
+        margin-top: 100px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 650px) {
+    .container {
+        margin-top: 200px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 490px) {
+    .container {
+        margin-top: 300px;
+    }
+}

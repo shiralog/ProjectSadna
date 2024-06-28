@@ -158,3 +158,24 @@ h3 {
 #chatForm input {
     height: 30px;
 }
+
+/* Responsive adjustments */
+@media (max-width: 1180px) {
+    .container {
+        margin-top: 100px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 650px) {
+    .container {
+        margin-top: 180px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 490px) {
+    .container {
+        margin-top: 230px;
+    }
+}

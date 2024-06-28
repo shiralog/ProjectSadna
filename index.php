@@ -35,6 +35,7 @@ if (isset($_SESSION['ID'])) {
     </form>
     <p id="message"></p>
     <a href="/pages/registration.html">Click here to register</a>
+    <a href="/pages/admin-reports.html">Login as Admin</a>
 
     <script src="/javascript/login.js"></script>
 </body>
