@@ -1,3 +1,6 @@
+document.addEventListener("DOMContentLoaded", function () {
+    checkNotifications();
+});
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -270,7 +273,7 @@ function setEvent() {
     formData.append('selectedClassroom', selectedClassroom);
     formData.append('selectedClassroomHours', selectedClassroomHours);
 
-    // Send AJAX request to insert-event.php
+    // Send request to insert-event.php
     fetch('insert-event.php', {
         method: 'POST',
         body: formData
@@ -282,14 +285,85 @@ function setEvent() {
             return response.text();
         })
         .then(data => {
-            console.log(data); // Log success message (optional)
-            // Optionally, you can update the UI or perform any other actions on success
+            console.log(data); // Log success message
+            addNotification(groupName.split(" ").pop()); //groupName.split(" ").pop() returns the groupID
             closeSetEventModal(); // Close the modal after successful insertion
         })
         .catch(error => {
             console.error('Error inserting event:', error);
-            // Optionally handle errors here (e.g., show an error message to the user)
         });
+}
+
+async function addNotification(groupID) {
+    try {
+        const response = await fetch(`get-group-members.php?groupID=${groupID}`);
+        const data = await response.json();
+        const membersIDs = data.map(student => student.ID);
+        console.log("members ids:", membersIDs);
+        const dataIDs = {
+            studentIDs: membersIDs
+        };
+        const responseNotifications = await fetch('notifications.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataIDs)
+        });
+
+        const resultNotifications = await responseNotifications.json();
+        if (resultNotifications.success) {
+            console.log('Notifications added or updated successfully.');
+        } else {
+            console.error('Error:', resultNotifications.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
+async function checkNotifications() {
+    try {
+        const response = await fetch(`check-notification-status.php?studentID=${userID}`);
+        const data = await response.json();
+
+        if (response.ok) {
+            if (data.status === true) {
+                console.log("Notification status: true");
+                document.getElementById('notification').textContent = "You have been added to a new event";
+            } else if (data.status === false) {
+                console.log("Notification status: false");
+            } else {
+                console.error("Unexpected response:", data);
+            }
+        } else {
+            console.error("Error response:", data);
+        }
+    } catch (error) {
+        console.error("Fetch error:", error);
+    }
+}
+
+async function updateNotification() {
+    try {
+        const response = await fetch(`update-notification-status.php?studentID=${userID}`);
+
+        const data = await response.json();
+
+        if (response.ok) {
+            if (data.success) {
+                console.log("Notification status updated to false");
+                document.getElementById('notification').textContent = "";
+            } else {
+                console.error("Error updating notification status:", data.error);
+            }
+        } else {
+            console.error("Error response:", data);
+        }
+    } catch (error) {
+        console.error("Fetch error:", error);
+    }
 }
 
 function closeModal() {
@@ -478,7 +552,7 @@ function showMyEvents() {
             .then(data => {
                 console.log('Fetched events:', data);
                 displayUserEvents(data, isConnectedToOutlook);
-                // Process the events data as needed
+                updateNotification();
             })
             .catch(error => {
                 console.error('Error fetching events:', error);

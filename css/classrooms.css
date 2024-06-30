@@ -158,7 +158,7 @@ body {
 #showMyEventsButton {
     display: flex;
     justify-content: center;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
 }
 
 .btn {
@@ -202,6 +202,32 @@ body {
 
 .btn-events:hover {
     background-color: #0056b3;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+#notification {
+    animation: blink 2s ease-in-out infinite;
+    font-size: 18px;
+    color: #da1717;
+    padding: 10px;
+    text-align: center;
+
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
 }
 
 /* Responsive adjustments */

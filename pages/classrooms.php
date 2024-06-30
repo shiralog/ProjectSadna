@@ -21,6 +21,9 @@
         <div id="showMyEventsButton">
             <button class="btn" onclick="showMyEvents()">My Events</button>
         </div>
+        <div>
+            <p id="notification"></p>
+        </div>
         <div class="calendar" id="calendar">
             <div class="header">
                 <button class="btn" onclick="changeMonth(-1)">Previous</button>
